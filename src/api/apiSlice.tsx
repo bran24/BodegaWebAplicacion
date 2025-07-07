@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { API_URL } from '../config.tsx'
-import { Categoria, CategoriaResponse, PermisosporTipo, PermisosResponse, ProductPagResponse, Roles, rolPermisos, RolPermisosResponse, RolResponse, Unidad, UnidadResponse, UsuarioPagResponse } from './types';
+import { Categoria, CategoriaResponse, PermisosporTipo, PermisosResponse, ProductPagResponse, Roles, rolPermisos, RolPermisosResponse, RolResponse, Unidad, UnidadResponse, UsuarioPagResponse,Proveedor,ProveedorPagResponse,ProveedorResponse } from './types';
 import { handleDecrypt } from '../utils/Encriptacion.tsx';
 // Define a service using a base URL and expected endpoints
 
@@ -26,7 +26,7 @@ const baseQuery = fetchBaseQuery({
 export const apiSlice = createApi({
     reducerPath: 'api',
     baseQuery,
-    tagTypes: ['getProductos', 'getUnidad', 'getCategoria', 'getPagProductos', 'getPermisos', 'getRoles', 'getUsuarios'],
+    tagTypes: ['getProductos', 'getUnidad', 'getCategoria', 'getPagProductos', 'getPermisos', 'getRoles', 'getUsuarios','getProveedor','getPagProveedor'],
     endpoints: (builder) => ({
         apiLogin: builder.mutation({
             query: (newTask) => ({
@@ -215,6 +215,36 @@ export const apiSlice = createApi({
             providesTags: ['getCategoria'],
         }),
 
+        apiRegistrarProveedor: builder.mutation({
+            query: (newtask) => ({ url: "proveedor", method: "POST", body: newtask }),
+            invalidatesTags: ['getPagProveedor']
+        }),
+
+        apiActualizarProveedor: builder.mutation({
+            query: (newtask) => ({ url: "proveedor", method: "PUT", body: newtask }),
+            invalidatesTags: ['getPagProveedor']
+        }),
+
+
+
+        apiEliminarProveedor: builder.mutation({
+            query: (id) => ({
+                url: `proveedor/${id}`, // Incluye el ID del producto en la URL
+                method: "DELETE",
+            }),
+            invalidatesTags: ['getPagProveedor'],
+        }),
+
+        
+           apiObtenerProveedorPaginacion: builder.query<ProveedorPagResponse, { page: number, limit: number }>({
+            query: ({ page, limit }) => `/proveedorpag?page=${page}&limit=${limit}`,
+
+            providesTags: ['getPagProveedor'],
+
+        }),
+
+        
+
 
         apiRegistrarProductos: builder.mutation({
             query: (newtask) => ({ url: "productos", method: "POST", body: newtask }),
@@ -244,4 +274,4 @@ export const apiSlice = createApi({
     }),
 })
 
-export const { useApiLoginMutation, useApiCrearUsuarioMutation, useApiRegistrarProductosMutation, useApiObtenerCategoriaQuery, useApiObtenerUnidadQuery, useApiActualizarProductosMutation, useApiEliminarProductosMutation, useApiObtenerProductosPaginacionQuery, useApiEliminarRolMutation, useApiObtenerPermisosQuery, useApiObtenerRolesQuery, useApiObtenerRolPermisosQuery, useApiRegistrarRolMutation, useApiRegistrarRolPermisoMutation, useApiActualizarPermisoMutation, useApiActualizarRolMutation, useApiEliminarUsuarioMutation, useApiActualizarUsuarioMutation, useApiObtenerUsuariosPaginacionQuery, useApiObtenerPermisosPorRolMutation, useApiActualizarRolPermisoMutation, useApiEliminarRolPermisoMutation } = apiSlice
+export const { useApiObtenerProveedorPaginacionQuery,useApiRegistrarProveedorMutation,useApiActualizarProveedorMutation,useApiEliminarProveedorMutation,useApiLoginMutation, useApiCrearUsuarioMutation, useApiRegistrarProductosMutation, useApiObtenerCategoriaQuery, useApiObtenerUnidadQuery, useApiActualizarProductosMutation, useApiEliminarProductosMutation, useApiObtenerProductosPaginacionQuery, useApiEliminarRolMutation, useApiObtenerPermisosQuery, useApiObtenerRolesQuery, useApiObtenerRolPermisosQuery, useApiRegistrarRolMutation, useApiRegistrarRolPermisoMutation, useApiActualizarPermisoMutation, useApiActualizarRolMutation, useApiEliminarUsuarioMutation, useApiActualizarUsuarioMutation, useApiObtenerUsuariosPaginacionQuery, useApiObtenerPermisosPorRolMutation, useApiActualizarRolPermisoMutation, useApiEliminarRolPermisoMutation } = apiSlice

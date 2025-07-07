@@ -1,3 +1,5 @@
+
+
 export interface Unidad {
     id: number;
     nombre: string;
@@ -75,6 +77,38 @@ export interface rolPermisos {
     fecha_creacion: string; // Puede ser Date
     fecha_actualizacion: string; // Puede ser Date
 
+
+
+}
+
+export interface Proveedor {
+  id: number;
+    nombre: string;
+    descripcion?: string;
+    contacto?: string;
+    email: string;
+    telefono:string;
+    direccion: string;
+    pais: string
+
+}
+
+
+
+
+
+export interface ProveedorResponse {
+    result: Proveedor[];
+}
+
+
+
+
+export interface ProveedorPagResponse {
+    proveedores: Proveedor[];
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
 
 }
 
