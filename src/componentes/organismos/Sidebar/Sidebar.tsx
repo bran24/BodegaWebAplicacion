@@ -138,17 +138,71 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             </NavLink>
                         </li>
 
-                        <li>
-                            <NavLink
-                                to="/principal/ventas"
-                                className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-primary2  ${pathname.includes('principal/ventas') &&
-                                    'bg-primary'
-                                    }`}
+
+                        {hasRequiredPermisosUs && (
+                            <SidebarLinkGroup
+                                activeCondition={
+                                    pathname === '/principal/ventas' || pathname.includes('ventas')
+                                }
                             >
-                                < MdPaid />
-                                Ventas
-                            </NavLink>
-                        </li>
+                                {(handleClick, open) => (
+                                    <>
+                                        <NavLink
+                                            to="#"
+                                            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out hover:bg-primary2 ${(pathname === '/principal/ventas/registrarVentas' ||
+                                                    pathname === '/principal/ventas/consultarVentas') &&
+                                                'bg-primary'
+                                                }`}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                sidebarExpanded ? handleClick() : setSidebarExpanded(true);
+                                            }}
+                                        > 
+                                            <FaRegUser />
+                                            Ventas
+                                            <FaAngleUp
+                                                className={`absolute right-4 top-1/2 -translate-y-1/2 ${open && 'rotate-180'
+                                                    }`}
+                                            />
+                                        </NavLink>
+
+                                        {/* Dropdown con ambas opciones */}
+                                        <div className={`translate transform overflow-hidden ${!open && 'hidden'}`}>
+                                            <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                                                <li>
+                                                    <NavLink
+                                                        to="/principal/ventas/registrarVentas"
+                                                        className={({ isActive }) =>
+                                                            'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-secundary3 duration-300 ease-in-out hover:text-primary2 ' +
+                                                            (isActive && '!text-primary2')
+                                                        }
+                                                    >Registrar Ventas
+                                                    </NavLink>
+                                                </li>
+
+                                                <li>
+                                                    <NavLink
+                                                        to="/principal/ventas/consultarVentas"
+                                                        className={({ isActive }) =>
+                                                            'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-secundary3 duration-300 ease-in-out hover:text-primary2 ' +
+                                                            (isActive && '!text-primary2')
+                                                        }
+                                                    >Consultar Ventas
+                                                    </NavLink>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </>
+                                )}
+                            </SidebarLinkGroup>
+                        )}
+
+
+
+
+
+
+
 
                         <li>
                             <NavLink

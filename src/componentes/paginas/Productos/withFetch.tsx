@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { useApiObtenerCategoriaQuery, useApiObtenerUnidadQuery, useApiObtenerProductosPaginacionQuery } from '../../../api/apiSlice';
-import { Product, Unidad, Categoria } from '../../../api/types';
+import { useApiObtenerCategoriaQuery, useApiObtenerUnidadQuery,useApiObtenerProveedorQuery, useApiObtenerProductosPaginacionQuery } from '../../../api/apiSlice';
+import { Product, Unidad, Categoria, Proveedor } from '../../../api/types';
 
 interface WithFetchProps {
     datos: Product[] | undefined;
     categorias: Categoria[] | undefined;
     unidades: Unidad[] | undefined;
+    proveedores: Proveedor[]| undefined;
     load: boolean;
     err: unknown;
     setPage: (page: number) => void;
@@ -17,13 +18,15 @@ const withFetch = <P,>(Component: React.ComponentType<P & WithFetchProps>) => {
         const [page, setPage] = useState(1);
         const { data: categorias, error: errorCategorias, isLoading: isLoadingCategorias } = useApiObtenerCategoriaQuery();
         const { data: unidades, error: errorUnidades, isLoading: isLoadingUnidades } = useApiObtenerUnidadQuery();
+         const { data: proveedores, error: errorProveedores, isLoading: isLoadingProveedores } = useApiObtenerProveedorQuery();
+
 
         const { data: productosData, error: errorProductos, isLoading: isLoadingProductos } = useApiObtenerProductosPaginacionQuery({ page, limit });
 
 
-        const isLoading = isLoadingProductos || isLoadingCategorias || isLoadingUnidades;
+        const isLoading = isLoadingProveedores || isLoadingCategorias || isLoadingUnidades ||isLoadingProductos;
 
-        const error = errorProductos || errorCategorias || errorUnidades;
+        const error = errorProductos || errorCategorias || errorUnidades || errorProveedores;
 
         const datos = productosData?.productos;
         const totalItems = productosData?.totalItems || 0;
@@ -39,6 +42,7 @@ const withFetch = <P,>(Component: React.ComponentType<P & WithFetchProps>) => {
                 currentPage={currentPage}
                 categorias={categorias}
                 unidades={unidades}
+                proveedores={proveedores}
                 load={isLoading}
                 err={error}
                 setPage={setPage}

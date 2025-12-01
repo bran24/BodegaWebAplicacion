@@ -67,7 +67,7 @@ const FormTextInput = <T extends FieldValues,>({
             })}
             id={inputName}
             disabled={disabled}
-            className={`py-1 px-2 rounded-r-xl w-full sm:w-full focus:outline-none bg-white ${disabled ? 'cursor-not-allowed' : ''
+            className={`py-1 px-2 rounded-r-xl w-full sm:w-full focus:outline-none bg-white ${disabled ? 'cursor-not-allowed caret-transparent select-none bg-zinc-300' : ''
               } `}
             {...register(inputName, options)}
           />

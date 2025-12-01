@@ -48,7 +48,7 @@ const Dropdown = <T extends FieldValues,>({
 
             className="appearance-none bg-white pl-3 py-1.5 text-sm rounded-r-xl w-full ring-1 ring-gray-300 focus:outline-none"
           >
-            <option value="" disabled selected hidden>
+            <option value="" >
               {placeholder}
             </option>
             {children}

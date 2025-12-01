@@ -1,17 +1,18 @@
 // components/ProductoTable/ProductoTable.tsx
 import React, { useEffect, useState } from 'react';
-import { Categoria, Product, Unidad } from '../../../api/types';
+import { Categoria, Product, Unidad, Proveedor } from '../../../api/types';
 import withFetch from './withFetch';
 import { FaBox, GoAlertFill, MdDelete, MdEdit, MdPaid } from '../../../assets/icon/icons'
 import ModalDosOpciones from '../../../utils/ModalDosOpciones';
 import { useForm, SubmitHandler } from "react-hook-form"
 import FormTextInput from '../../atomos/formInputs/formTextInput';
-import { FaCalendar } from 'react-icons/fa6';
+import { FaCalendar, FaPercent } from 'react-icons/fa6';
 import ButtonPrimaryOnclick from '../../atomos/buttons/buttonPrimaryOnclick';
 import { errorAlert, successAlert } from '../../../utils/alertNotify';
 import Dropdown from '../../atomos/formInputs/dropdown';
 import Loader2 from '../../atomos/Loader/loader2';
 import { useApiEliminarProductosMutation, useApiActualizarProductosMutation, useApiRegistrarProductosMutation } from '../../../api/apiSlice';
+import SwitchCustom from '../../atomos/checkbox/switchCustom';
 
 interface ProductoTableProps {
     datos: Product[] | undefined;
@@ -19,13 +20,14 @@ interface ProductoTableProps {
     err: unknown;
     categorias: Categoria[] | undefined;
     unidades: Unidad[] | undefined;
+    proveedores: Proveedor[] | undefined;
     totalItems: number,
     totalPages: number,
     currentPage: number,
     setPage: (pag: number) => void
 }
 
-const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categorias, unidades, totalItems,
+const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categorias, unidades,proveedores, totalItems,
     totalPages,
     currentPage,
     setPage }) => {
@@ -36,9 +38,11 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
         nombre: string;
         descripcion: string;
         precioCompra: string;
+        afecta_igv:boolean
         precioVenta: string;
         unidad: string;
         categoria: string;
+        proveedor:string;
         cantidad: number;
         fechaVencimiento: string; // Puede ser Date si prefieres trabajar con objetos Date
 
@@ -83,18 +87,20 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
         reset,
 
         formState: { errors },
-    } = useForm<ProductoTypes>();
+    } = useForm<ProductoTypes>({defaultValues: { afecta_igv: false }});
 
     useEffect(() => {
         if (selProducto && typeOfPanel === 'Actualizar') {
 
 
             setValue("nombre", selProducto?.nombre || '');
+            setValue("afecta_igv",selProducto?.afecta_igv ||  false)
             setValue("descripcion", selProducto?.descripcion || '');
             setValue("precioVenta", selProducto?.precioVenta || '');
             setValue("precioCompra", selProducto?.precioCompra || '');
             setValue("unidad", selProducto?.unidad?.id.toString() || '0');
             setValue("categoria", selProducto?.categoria.id.toString() || '0');
+            setValue("proveedor", selProducto?.proveedor?.id.toString() || '0');
             setValue("cantidad", selProducto?.cantidad || 0);
 
 
@@ -163,7 +169,7 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
 
     const onSubmit: SubmitHandler<ProductoTypes> = async (dataform) => {
 
-        const { cantidad, fechaVencimiento, nombre, descripcion, precioCompra, precioVenta, unidad, categoria } = dataform
+        const { cantidad, fechaVencimiento, nombre, descripcion, precioCompra, precioVenta, unidad, categoria,proveedor,afecta_igv } = dataform
 
         if (typeOfPanel === 'Registrar') {
 
@@ -171,7 +177,7 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
             try {
 
 
-                const jsondata = { nombre, precioCompra, descripcion, precioVenta, cantidad, fechaVencimiento, unidad, categoria }
+                const jsondata = { nombre, precioCompra, descripcion, precioVenta, cantidad, fechaVencimiento, unidad, categoria,proveedor,afecta_igv }
 
                 console.log(jsondata)
                 await apiRegistrarProductos(jsondata).unwrap()
@@ -197,7 +203,7 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
 
 
 
-                const jsondata = { "id": selProducto?.id, nombre, precioCompra, descripcion, precioVenta, cantidad, fechaVencimiento, unidad, categoria }
+                const jsondata = { "id": selProducto?.id, nombre, precioCompra, descripcion, precioVenta, cantidad, fechaVencimiento, unidad, categoria,proveedor,afecta_igv }
 
                 console.log(jsondata)
                 await apiActualizarProductos(jsondata).unwrap()
@@ -290,6 +296,7 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
                             <th className='border border-secundary4'>P.Venta</th>
                             <th className='border border-secundary4'>Categoria</th>
                             <th className='border border-secundary4'>Unidad</th>
+                            <th className='border border-secundary4'>Proveedor</th>
                             <th className='border border-secundary4'>Cantidad</th>
                             <th className='border border-secundary4'>Fecha de Vencimiento</th>
                             <th className='border border-secundary4'>Acciones</th>
@@ -302,8 +309,9 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
                                 <td className='border border-secundary4'>{product.nombre || ''}</td>
                                 <td className='border border-secundary4'>{product.precioCompra || ''}</td>
                                 <td className='border border-secundary4'>{product.precioVenta || ''}</td>
-                                <td className='border border-secundary4'>{product.categoria.nombre || ''}</td>
-                                <td className='border border-secundary4'>{product.unidad.abreviatura || ''}</td>
+                                <td className='border border-secundary4'>{product.categoria?.nombre || ''}</td>
+                                <td className='border border-secundary4'>{product.unidad?.abreviatura || ''}</td>
+                                 <td className='border border-secundary4'>{product.proveedor?.nombre || ''}</td>
 
                                 <td className='border border-secundary4'>{product.cantidad || ''}</td>
                                 <td className='border border-secundary4'>{
@@ -504,6 +512,8 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
 
                         />
 
+                  
+
 
                         <FormTextInput
                             inputName="fechaVencimiento"
@@ -518,6 +528,25 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
                             errors={errors.fechaVencimiento}
 
                         />
+
+                           <Dropdown
+                            options={{
+                              
+
+                            }}
+                            register={register} errors={errors.proveedor} title='Proveedor' placeholder=' Seleccionar Proveedor' inputName='proveedor' icon={< FaBox />} >
+                            {Array.isArray(proveedores)
+                                && proveedores.map((item) => (
+                                    <option
+                                        key={item.id}
+                                        value={item.id}
+                                        className="capitalize text-gray-700"
+                                    >
+                                        {item.nombre}
+                                    </option>
+                                ))}
+
+                        </Dropdown>
 
                         <Dropdown
                             options={{
@@ -563,6 +592,13 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
                                 ))}
 
                         </Dropdown>
+
+                        <SwitchCustom
+                        register={register}
+                        name="afecta_igv"
+                        title="Afecta IGV"
+                        errors={errors.afecta_igv}
+                    />
 
 
                     </form>

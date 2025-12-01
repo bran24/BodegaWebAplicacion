@@ -8,7 +8,8 @@ import Principal from "./componentes/paginas/Principal/Principal.tsx";
 import Dashboard from "./componentes/paginas/Dashboard/Dashboard.tsx";
 import PageProductos from "./componentes/paginas/Productos/Productos.tsx";
 import Clientes from "./componentes/paginas/Clientes/Clientes.tsx";
-import Ventas from "./componentes/paginas/Ventas/Ventas.tsx";
+import RegistrarVentas from "./componentes/paginas/Ventas/RegistrarVentas.tsx";
+import ConsultarVentas from "./componentes/paginas/Ventas/ConsultarVentas.tsx";
 import PageProveedor from "./componentes/paginas/Proveedores/Proveedores.tsx";
 import Botellas from "./componentes/paginas/Botellas/Ventas.tsx";
 import 'react-toastify/dist/ReactToastify.css';
@@ -48,7 +49,8 @@ function App() {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="productos" element={<PageProductos />} />
             <Route path="clientes" element={<Clientes />} />
-            <Route path="ventas" element={<Ventas />} />
+            <Route path="ventas/registrarVentas" element={<RegistrarVentas />} />
+            <Route path="ventas/consultarVentas" element={<ConsultarVentas />} />
             <Route path="proveedores" element={<PageProveedor />} />
             <Route path="botellas" element={<Botellas />} />
             <Route path="usuarios/permisos" element={<ProtectedRoute requiredPermisos={[2, 3, 4, 5]} element={<PagePermisos />} />}></Route>
