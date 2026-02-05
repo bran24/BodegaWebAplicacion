@@ -1,5 +1,6 @@
 export { FaArrowLeft, FaArrowDown, FaAngleUp, FaRegRectangleList, FaBottleWater } from "react-icons/fa6";
-export { FaBox } from "react-icons/fa";
+export { FaBox, FaEye, FaMoneyBill } from "react-icons/fa";
+export { TiDelete } from "react-icons/ti";
 export { FaChevronDown, FaChevronUp, FaRegUser } from "react-icons/fa6";
 export { IoSettingsOutline } from "react-icons/io5";
 export { CiLogout } from "react-icons/ci";

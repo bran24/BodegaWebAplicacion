@@ -5,6 +5,8 @@ import { Usuario } from '../../../api/types';
 interface WithFetchProps {
     datos: Usuario[] | undefined;
     load: boolean;
+    query: string | undefined;
+    setQuery: (query: string | undefined) => void;
     err: unknown;
     setPage: (page: number) => void;
 }
@@ -14,8 +16,8 @@ const withFetch = <P,>(Component: React.ComponentType<P & WithFetchProps>) => {
         const limit = 10;
         const [page, setPage] = useState(1);
 
-
-        const { data: usuariosData, error: errorUsuarios, isLoading: isLoadingUsuarios } = useApiObtenerUsuariosPaginacionQuery({ page, limit });
+        const [query, setQuery] = useState<string | undefined>(undefined);
+        const { data: usuariosData, error: errorUsuarios, isLoading: isLoadingUsuarios } = useApiObtenerUsuariosPaginacionQuery({ page: page, limit: limit, query: query });
 
         const { data: rolesData, error: errorRoles, isLoading: isLoadingRoles } = useApiObtenerRolesQuery()
 
@@ -40,7 +42,8 @@ const withFetch = <P,>(Component: React.ComponentType<P & WithFetchProps>) => {
                 load={isLoading}
                 err={error}
                 setPage={setPage}
-
+                query={query}
+                setQuery={setQuery}
             />
         );
     };

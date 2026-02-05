@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import CryptoJS from 'crypto-js';
-import { API_TKEY } from './../config'
+import { API_TKEY } from '../config'
 
 
 export const handleEncrypt = (data: string): string => {

@@ -22,14 +22,18 @@ interface ProveedorTableProps {
     totalItems: number,
     totalPages: number,
     currentPage: number,
-    setPage: (pag: number) => void
+    setPage: (pag: number) => void,
+    setQuery: (query: string | undefined) => void,
+    query: string | undefined
 }
 
 
 const ProveedorTable: React.FC<ProveedorTableProps> = ({ datos, load, err, totalItems,
     totalPages,
     currentPage,
-    setPage }) => {
+    setPage,
+    setQuery,
+    query }) => {
 
 
     interface ProveedorTypes {
@@ -112,6 +116,16 @@ const ProveedorTable: React.FC<ProveedorTableProps> = ({ datos, load, err, total
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selProveedor])
 
+    function handleBuscarChange(event: React.ChangeEvent<HTMLInputElement>) {
+        const query = event.target.value;
+
+        console.log(query)
+        setQuery(query);
+    }
+
+
+
+
 
     if (load) return <Loader2 />;
     if (err) return (
@@ -126,7 +140,7 @@ const ProveedorTable: React.FC<ProveedorTableProps> = ({ datos, load, err, total
 
     );
 
-    if (!datos || datos.length === 0) return <p>No hay Proveedor disponibles.</p>;
+    // if (!datos || datos.length === 0) return <p>No hay Proveedor disponibles.</p>;
 
 
 
@@ -252,9 +266,16 @@ const ProveedorTable: React.FC<ProveedorTableProps> = ({ datos, load, err, total
         <div className="w-full max-w-full h-screen rounded-sm border  bg-white p-3">
             <p className='font-semibold text-4xl my-4'>Proveedor</p>
 
+            <div className='w-full md:w-2/12' >
+                <label className="text-sm font-semibold text-gray-700">Buscar</label>
+
+                <input placeholder="Buscar" onChange={handleBuscarChange} value={query || ""} className="border p-2 rounded w-full bg-white" type="text" />
+
+            </div>
+
             <div className='flex justify-end'>
 
-                <div className='mb-4 w-40' >
+                <div className='mb-4 w-auto' >
 
                     <ButtonPrimaryOnclick onClick={() => {
 
@@ -262,7 +283,7 @@ const ProveedorTable: React.FC<ProveedorTableProps> = ({ datos, load, err, total
                         handleOpenModal()
 
 
-                    }} title='Registrar  Proveedor' disable={false}></ButtonPrimaryOnclick>
+                    }} title='Registrar Proveedor' disable={false}></ButtonPrimaryOnclick>
 
                 </div>
 
@@ -280,7 +301,7 @@ const ProveedorTable: React.FC<ProveedorTableProps> = ({ datos, load, err, total
                         </tr>
                     </thead>
                     <tbody>
-                        {datos.map(product => (
+                        {datos && datos.length > 0 ? datos?.map(product => (
                             <tr key={product.id}>
                                 <td className='border border-secundary4'>{product.id || ''}</td>
                                 <td className='border border-secundary4'>{product.nombre || ''}</td>
@@ -309,7 +330,7 @@ const ProveedorTable: React.FC<ProveedorTableProps> = ({ datos, load, err, total
 
                                 </td>
                             </tr>
-                        ))}
+                        )) : <tr><td colSpan={5} className="text-center">No hay datos disponibles.</td></tr>}
                     </tbody>
                 </table>
 

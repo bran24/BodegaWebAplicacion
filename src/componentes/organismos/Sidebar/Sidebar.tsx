@@ -150,14 +150,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                         <NavLink
                                             to="#"
                                             className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out hover:bg-primary2 ${(pathname === '/principal/ventas/registrarVentas' ||
-                                                    pathname === '/principal/ventas/consultarVentas') &&
+                                                pathname === '/principal/ventas/consultarVentas') &&
                                                 'bg-primary'
                                                 }`}
                                             onClick={(e) => {
                                                 e.preventDefault();
                                                 sidebarExpanded ? handleClick() : setSidebarExpanded(true);
                                             }}
-                                        > 
+                                        >
                                             <FaRegUser />
                                             Ventas
                                             <FaAngleUp
@@ -215,17 +215,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 Proveedores
                             </NavLink>
                         </li>
-                        <li>
-                            <NavLink
-                                to="/principal/botellas"
-                                className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-primary2  ${pathname.includes('botellas') &&
-                                    'bg-primary'
-                                    }`}
-                            >
-                                < FaBottleWater />
-                                Botellas
-                            </NavLink>
-                        </li>
+
 
 
 
@@ -379,13 +369,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                                 <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
                                                     <li>
                                                         <NavLink
-                                                            to="reportes/ventas"
+                                                            to="reportes/caja"
                                                             className={({ isActive }) =>
                                                                 'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-secundary3 duration-300 ease-in-out hover:text-primary2 ' +
                                                                 (isActive && '!text-primary2')
                                                             }
                                                         >
-                                                            Ventas
+                                                            Caja
                                                         </NavLink>
                                                     </li>
                                                 </ul>
@@ -405,6 +395,19 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
 
                         </SidebarLinkGroup>
+
+
+                        <li>
+                            <NavLink
+                                to="/principal/chatbotIA"
+                                className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-primary2  ${pathname.includes('chatIA') &&
+                                    'bg-primary'
+                                    }`}
+                            >
+                                <  FaBox />
+                                ChatBot IA
+                            </NavLink>
+                        </li>
 
 
                     </ul>

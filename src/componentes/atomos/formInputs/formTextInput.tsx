@@ -30,6 +30,11 @@ const FormTextInput = <T extends FieldValues,>({
   type,
   disabled,
 }: FormTextProps<T>) => {
+
+  const minValidation = (options as any)?.min;
+  const minValue = typeof minValidation === 'object' ? minValidation.value : minValidation;
+  const isPositiveOnly = type === 'number' && minValue !== undefined && minValue >= 0;
+
   return (
     <label htmlFor={inputName} className="w-full mt-2 ">
       <p className="font-semibold pl-2.5 text-gray-800 mb-2">{title}</p>
@@ -39,6 +44,12 @@ const FormTextInput = <T extends FieldValues,>({
             {icon}
           </div>
           <input
+            onKeyDown={(e) => {
+              if (isPositiveOnly && (e.key === '-' || e.key === 'e' || e.key === 'E')) {
+                e.preventDefault();
+              }
+            }}
+            min={isPositiveOnly ? 0 : undefined}
             {...(!disabled && { placeholder })}
             {...(type === 'password' && {
               autoComplete: 'new-password',

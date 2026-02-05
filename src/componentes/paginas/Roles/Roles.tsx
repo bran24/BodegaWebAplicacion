@@ -274,7 +274,7 @@ const RolesTable: React.FC<RolesTableProps> = ({ datos, load, err, dataPermisos 
 
             <div className='flex justify-end'>
 
-                <div className='mb-4 w-40' >
+                <div className='mb-4 w-auto' >
 
                     <ButtonPrimaryOnclick onClick={() => {
 
@@ -282,7 +282,7 @@ const RolesTable: React.FC<RolesTableProps> = ({ datos, load, err, dataPermisos 
                         handleOpenModal()
 
 
-                    }} title='Registrar  Rol' disable={false}></ButtonPrimaryOnclick>
+                    }} title='Registrar Rol' disable={false}></ButtonPrimaryOnclick>
 
                 </div>
 

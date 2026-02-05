@@ -11,8 +11,10 @@ import ButtonPrimaryOnclick from '../../atomos/buttons/buttonPrimaryOnclick';
 import { errorAlert, successAlert } from '../../../utils/alertNotify';
 import Dropdown from '../../atomos/formInputs/dropdown';
 import Loader2 from '../../atomos/Loader/loader2';
-import { useApiEliminarProductosMutation, useApiActualizarProductosMutation, useApiRegistrarProductosMutation } from '../../../api/apiSlice';
+import { useApiEliminarProductosMutation, useApiActualizarProductosMutation, useApiRegistrarProductosMutation, useLazyApiObtenerProductosPaginacionQuery } from '../../../api/apiSlice';
 import SwitchCustom from '../../atomos/checkbox/switchCustom';
+import { generateProductsPDF } from '../../../utils/generateProductsPDF';
+import { FaFilePdf, FaSpinner } from 'react-icons/fa';
 
 interface ProductoTableProps {
     datos: Product[] | undefined;
@@ -24,13 +26,36 @@ interface ProductoTableProps {
     totalItems: number,
     totalPages: number,
     currentPage: number,
-    setPage: (pag: number) => void
+    setPage: (pag: number) => void,
+    setQuery: (query: string | undefined) => void,
+    query: string | undefined,
+    categoria: number | undefined,
+    setCategoria: (categoria: number | undefined) => void,
+    proveedor: number | undefined,
+    setProveedor: (proveedor: number | undefined) => void,
+    fechaVencimiento: string | undefined,
+    setFechaVencimiento: (fechaVencimiento: string | undefined) => void,
+    ordenStock: string | undefined,
+    setOrdenStock: (orden: string | undefined) => void,
+
+
 }
 
-const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categorias, unidades,proveedores, totalItems,
+const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categorias, unidades, proveedores, totalItems,
     totalPages,
     currentPage,
-    setPage }) => {
+    query,
+    setQuery,
+    setPage,
+    categoria,
+    setCategoria,
+    proveedor,
+    setProveedor,
+    fechaVencimiento,
+    setFechaVencimiento,
+    ordenStock,
+    setOrdenStock
+}) => {
 
 
     interface ProductoTypes {
@@ -38,11 +63,11 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
         nombre: string;
         descripcion: string;
         precioCompra: string;
-        afecta_igv:boolean
+        afecta_igv: boolean
         precioVenta: string;
         unidad: string;
         categoria: string;
-        proveedor:string;
+        proveedor: string;
         cantidad: number;
         fechaVencimiento: string; // Puede ser Date si prefieres trabajar con objetos Date
 
@@ -62,6 +87,8 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
     const [typeOfPanel, setTypeOfPanel] = useState('Registrar');
     const [isModalOpen, setModalOpen] = useState(false)
     const [isLoadModal] = useState(false);
+    const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+
 
     const [isModalConfirmationOpen, setModalConfirmationOpen] = useState(false)
     const [isLoadConfirmationModal] = useState(false);
@@ -79,6 +106,57 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
         clearInputs();
         setModalOpen(false)
     };
+
+    const [triggerGetProductos] = useLazyApiObtenerProductosPaginacionQuery();
+
+    const handleGenerarPDF = async () => {
+        if (datos && datos.length === 0) {
+            errorAlert('No hay productos para generar el reporte.');
+            return;
+        }
+
+        try {
+            setIsGeneratingPdf(true);
+            const fullData = await triggerGetProductos({
+                page: 1,
+                limit: 100000, // Limit alto para traer todo s el backend no soporta 'all' aun, pero el ideal es 'all'
+                query: query,
+                categoria: categoria,
+                proveedor: proveedor,
+                fechaVencimiento: fechaVencimiento,
+                ordenStock: ordenStock,
+                all: "true"
+            }).unwrap();
+
+            if (fullData.productos.length === 0) {
+                errorAlert('No se encontraron registros para exportar.');
+                return;
+            }
+
+            const categoriaNombre = categoria
+                ? categorias?.find(c => c.id === categoria)?.nombre
+                : undefined;
+
+            const proveedorNombre = proveedor
+                ? proveedores?.find(p => p.id === proveedor)?.nombre
+                : undefined;
+
+            await generateProductsPDF(fullData.productos, {
+                query,
+                categoria: categoriaNombre,
+                proveedor: proveedorNombre,
+                fechaVencimiento
+            });
+
+        } catch (error) {
+            console.error(error);
+            errorAlert('Error al generar el reporte PDF');
+        } finally {
+            setIsGeneratingPdf(false);
+        }
+    };
+
+
     const {
         register,
         clearErrors,
@@ -87,19 +165,19 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
         reset,
 
         formState: { errors },
-    } = useForm<ProductoTypes>({defaultValues: { afecta_igv: false }});
+    } = useForm<ProductoTypes>({ defaultValues: { afecta_igv: false } });
 
     useEffect(() => {
         if (selProducto && typeOfPanel === 'Actualizar') {
 
 
             setValue("nombre", selProducto?.nombre || '');
-            setValue("afecta_igv",selProducto?.afecta_igv ||  false)
+            setValue("afecta_igv", selProducto?.afecta_igv || false)
             setValue("descripcion", selProducto?.descripcion || '');
             setValue("precioVenta", selProducto?.precioVenta || '');
             setValue("precioCompra", selProducto?.precioCompra || '');
             setValue("unidad", selProducto?.unidad?.id.toString() || '0');
-            setValue("categoria", selProducto?.categoria.id.toString() || '0');
+            setValue("categoria", selProducto?.categoria?.id.toString() || '0');
             setValue("proveedor", selProducto?.proveedor?.id.toString() || '0');
             setValue("cantidad", selProducto?.cantidad || 0);
 
@@ -131,6 +209,54 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selProducto])
 
+    const handleCategoriaChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const categoriaId = event.target.value;
+        if (categoriaId === "") {
+            setCategoria(undefined);
+        } else {
+            setCategoria(Number(categoriaId));
+        }
+    };
+
+    const handleProveedorChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const proveedorId = event.target.value;
+        if (proveedorId === "") {
+            setProveedor(undefined);
+        } else {
+            setProveedor(Number(proveedorId));
+        }
+    };
+    const handleFechaVencimientoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const fechaVencimiento = event.target.value;
+        if (fechaVencimiento === '') {
+            setFechaVencimiento(undefined);
+        }
+        else {
+            setFechaVencimiento(fechaVencimiento);
+        }
+
+    };
+
+    const handleOrdenStockChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const orden = event.target.value;
+        if (orden === "") {
+            setOrdenStock(undefined);
+        } else {
+            setOrdenStock(orden);
+        }
+    };
+
+
+    function handleBuscarChange(event: React.ChangeEvent<HTMLInputElement>) {
+        const query = event.target.value;
+
+        console.log(query)
+        setQuery(query);
+    }
+
+
+
+
 
     if (load) return <Loader2 />;
     if (err) return (
@@ -145,7 +271,7 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
 
     );
 
-    if (!datos || datos.length === 0) return <p>No hay Productos disponibles.</p>;
+
 
 
 
@@ -169,7 +295,7 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
 
     const onSubmit: SubmitHandler<ProductoTypes> = async (dataform) => {
 
-        const { cantidad, fechaVencimiento, nombre, descripcion, precioCompra, precioVenta, unidad, categoria,proveedor,afecta_igv } = dataform
+        const { cantidad, fechaVencimiento, nombre, descripcion, precioCompra, precioVenta, unidad, categoria, proveedor, afecta_igv } = dataform
 
         if (typeOfPanel === 'Registrar') {
 
@@ -177,7 +303,7 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
             try {
 
 
-                const jsondata = { nombre, precioCompra, descripcion, precioVenta, cantidad, fechaVencimiento, unidad, categoria,proveedor,afecta_igv }
+                const jsondata = { nombre, precioCompra, descripcion, precioVenta, cantidad, fechaVencimiento, unidad, categoria, proveedor, afecta_igv }
 
                 console.log(jsondata)
                 await apiRegistrarProductos(jsondata).unwrap()
@@ -203,7 +329,7 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
 
 
 
-                const jsondata = { "id": selProducto?.id, nombre, precioCompra, descripcion, precioVenta, cantidad, fechaVencimiento, unidad, categoria,proveedor,afecta_igv }
+                const jsondata = { "id": selProducto?.id, nombre, precioCompra, descripcion, precioVenta, cantidad, fechaVencimiento, unidad, categoria, proveedor, afecta_igv }
 
                 console.log(jsondata)
                 await apiActualizarProductos(jsondata).unwrap()
@@ -264,14 +390,88 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
 
 
 
+
     return (
 
-        <div className="w-full max-w-full h-screen rounded-sm border  bg-white p-3">
+        <div className="w-full max-w-full h-screen rounded-sm border  bg-white p-4">
             <p className='font-semibold text-4xl my-4'>Productos</p>
 
-            <div className='flex justify-end'>
+            <div className='flex justify-between flex-wrap gap-2 items-center mb-4' >
+                <div className='w-full md:w-[20%]'>
+                    <label className="text-sm font-semibold text-gray-700">Buscar</label>
 
-                <div className='mb-4 w-40' >
+                    <input placeholder="Buscar" onChange={handleBuscarChange} value={query || ""} className="border p-2 rounded w-full bg-white" type="text" />
+                </div>
+
+
+                <div className='flex flex-col w-full md:w-[15%]'>
+
+                    <label className="text-sm font-semibold text-gray-700">Categoria</label>
+                    <select className='border p-2 rounded w-full bg-white' name="categoria" value={categoria || ""} onChange={handleCategoriaChange} id="">
+                        <option value="">Todos</option>
+                        {categorias?.map((categoria) => (
+                            <option key={categoria.id} value={categoria.id}>
+                                {categoria.nombre}
+                            </option>
+                        ))}
+
+                    </select>
+                </div>
+
+                <div className='flex flex-col w-full md:w-[15%]'>
+                    <label className="text-sm font-semibold text-gray-700">Proveedor</label>
+                    <select className='border p-2 rounded w-full bg-white' name="proveedor" value={proveedor || ""} onChange={handleProveedorChange}>
+                        <option value="">Todos</option>
+                        {proveedores?.map((proveedor) => (
+                            <option key={proveedor.id} value={proveedor.id}>
+                                {proveedor.nombre}
+                            </option>
+                        ))}
+
+                    </select>
+                </div>
+                <div className='flex flex-col w-full md:w-[15%]'>
+                    <label className="text-sm font-semibold text-gray-700">Fecha de Vencimiento</label>
+                    <input name="fechaVencimiento" value={fechaVencimiento || ""} onChange={handleFechaVencimientoChange} type="date" className="border p-2 rounded w-full bg-white" />
+                </div>
+
+                <div className='flex flex-col w-full md:w-[15%]'>
+                    <label className="text-sm font-semibold text-gray-700">Ordenar por Stock</label>
+                    <select
+                        className='border p-2 rounded w-full bg-white'
+                        value={ordenStock || ""}
+                        onChange={handleOrdenStockChange}
+                    >
+                        <option value="">Por defecto</option>
+                        <option value="ASC">Menor Stock</option>
+                        <option value="DESC">Mayor Stock</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div className='flex justify-end gap-2'>
+
+                <div className='mb-4 w-auto'>
+                    <button
+                        onClick={handleGenerarPDF}
+                        disabled={isGeneratingPdf}
+                        className={`flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-md transition duration-300 font-medium whitespace-nowrap ${isGeneratingPdf ? 'opacity-70 cursor-not-allowed' : 'hover:bg-red-700'}`}
+                    >
+                        {isGeneratingPdf ? (
+                            <>
+                                <FaSpinner className="animate-spin" /> Generando...
+                            </>
+                        ) : (
+                            <>
+                                <FaFilePdf /> Generar Reporte PDF
+                            </>
+                        )}
+                    </button>
+                </div>
+
+
+                <div className='mb-4 w-auto' >
 
                     <ButtonPrimaryOnclick onClick={() => {
 
@@ -279,19 +479,20 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
                         handleOpenModal()
 
 
-                    }} title='Registrar  Producto' disable={false}></ButtonPrimaryOnclick>
+                    }} title='Registrar Producto' disable={false}></ButtonPrimaryOnclick>
 
                 </div>
 
             </div>
 
 
-            <div className='max-h-80 overflow-auto'>
+            <div className='max-h-[500px] overflow-y-auto'>
                 <table className="table-auto border shadow-sm border-secundary4 w-full bg-white text-center">
                     <thead >
                         <tr >
                             <th className='border border-secundary4' >ID</th>
                             <th className='border border-secundary4'>Nombre</th>
+                            <th className='border border-secundary4'>SKU</th>
                             <th className='border border-secundary4'>P.Compra</th>
                             <th className='border border-secundary4'>P.Venta</th>
                             <th className='border border-secundary4'>Categoria</th>
@@ -303,20 +504,21 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
                         </tr>
                     </thead>
                     <tbody>
-                        {datos.map(product => (
+                        {datos && datos?.length > 0 ? datos?.map(product => (
                             <tr key={product.id}>
                                 <td className='border border-secundary4'>{product.id || ''}</td>
                                 <td className='border border-secundary4'>{product.nombre || ''}</td>
+                                <td className='border border-secundary4'>{product.sku || ''}</td>
                                 <td className='border border-secundary4'>{product.precioCompra || ''}</td>
                                 <td className='border border-secundary4'>{product.precioVenta || ''}</td>
                                 <td className='border border-secundary4'>{product.categoria?.nombre || ''}</td>
                                 <td className='border border-secundary4'>{product.unidad?.abreviatura || ''}</td>
-                                 <td className='border border-secundary4'>{product.proveedor?.nombre || ''}</td>
+                                <td className='border border-secundary4'>{product.proveedor?.nombre || ''}</td>
 
-                                <td className='border border-secundary4'>{product.cantidad || ''}</td>
+                                <td className={`border border-secundary4 ${(product.cantidad || 0) < 10 ? 'bg-red-100 text-red-700 font-bold' : ''}`}>{product.cantidad || 0}</td>
                                 <td className='border border-secundary4'>{
                                     product?.fechaVencimiento ?
-                                        new Date(product.fechaVencimiento).toLocaleDateString() : ''}</td>
+                                        new Date(product.fechaVencimiento).toISOString().split('T')[0] : ''}</td>
                                 <td className='border border-secundary4 '>
                                     <div className='flex flex-row justify-center gap-3 my-1'>
 
@@ -339,7 +541,7 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
 
                                 </td>
                             </tr>
-                        ))}
+                        )) : <tr><td colSpan={11} className="text-center">No hay Productos disponibles.</td></tr>}
                     </tbody>
                 </table>
 
@@ -512,7 +714,7 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
 
                         />
 
-                  
+
 
 
                         <FormTextInput
@@ -529,9 +731,9 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
 
                         />
 
-                           <Dropdown
+                        <Dropdown
                             options={{
-                              
+
 
                             }}
                             register={register} errors={errors.proveedor} title='Proveedor' placeholder=' Seleccionar Proveedor' inputName='proveedor' icon={< FaBox />} >
@@ -594,11 +796,11 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
                         </Dropdown>
 
                         <SwitchCustom
-                        register={register}
-                        name="afecta_igv"
-                        title="Afecta IGV"
-                        errors={errors.afecta_igv}
-                    />
+                            register={register}
+                            name="afecta_igv"
+                            title="Afecta IGV"
+                            errors={errors.afecta_igv}
+                        />
 
 
                     </form>

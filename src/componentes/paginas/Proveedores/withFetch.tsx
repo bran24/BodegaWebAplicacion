@@ -1,23 +1,26 @@
 import React, { useState } from 'react';
-import {  useApiObtenerProveedorPaginacionQuery } from '../../../api/apiSlice';
+import { useApiObtenerProveedorPaginacionQuery } from '../../../api/apiSlice';
 import { Proveedor } from '../../../api/types';
 
 interface WithFetchProps {
-    datos:   Proveedor[] | undefined;
+    datos: Proveedor[] | undefined;
     load: boolean;
     err: unknown;
     setPage: (page: number) => void;
+    setQuery: (query: string | undefined) => void;
+    query: string | undefined
 }
 
 const withFetch = <P,>(Component: React.ComponentType<P & WithFetchProps>) => {
     return (props: P) => {
         const limit = 10;
         const [page, setPage] = useState(1);
+        const [query, setQuery] = useState<string | undefined>("");
 
-        const { data: proveedorData, error: errorProveedor, isLoading: isLoadingProveedor } = useApiObtenerProveedorPaginacionQuery({ page, limit });
+        const { data: proveedorData, error: errorProveedor, isLoading: isLoadingProveedor } = useApiObtenerProveedorPaginacionQuery({ page, limit, query });
 
 
-        const isLoading = isLoadingProveedor ;
+        const isLoading = isLoadingProveedor;
 
         const error = errorProveedor;
 
@@ -36,7 +39,8 @@ const withFetch = <P,>(Component: React.ComponentType<P & WithFetchProps>) => {
                 load={isLoading}
                 err={error}
                 setPage={setPage}
-
+                query={query}
+                setQuery={setQuery}
             />
         );
     };

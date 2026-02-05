@@ -19,7 +19,7 @@ const ModalDosOpciones: React.FC<ModalProps> = ({ children, isOpen, titleFirstOp
 
   return ReactDOM.createPortal(
     <div className="fixed z-9999 inset-0 bg-black bg-opacity-50 flex justify-center items-center" >
-      <div className="bg-white md:max-h-[35rem] max-h-lvh overflow-auto p-8 rounded-lg shadow-lg  md:w-5/12 w-11/12" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-white md:max-h-[40rem] max-h-lvh overflow-auto py-3 px-7 rounded-lg shadow-lg  md:w-10/12 w-11/12" onClick={(e) => e.stopPropagation()}>
         <div className=' flex justify-end'>
           <IoCloseSharp onClick={() => { onClickFirstOption() }} className='hover:text-primary  text-xl' />
 

@@ -11,14 +11,14 @@ import Clientes from "./componentes/paginas/Clientes/Clientes.tsx";
 import RegistrarVentas from "./componentes/paginas/Ventas/RegistrarVentas.tsx";
 import ConsultarVentas from "./componentes/paginas/Ventas/ConsultarVentas.tsx";
 import PageProveedor from "./componentes/paginas/Proveedores/Proveedores.tsx";
-import Botellas from "./componentes/paginas/Botellas/Ventas.tsx";
 import 'react-toastify/dist/ReactToastify.css';
 import PagePermisos from "./componentes/paginas/Permisos/Permisos.tsx";
 import PageRoles from "./componentes/paginas/Roles/Roles.tsx";
 import PageUsuarios from "./componentes/paginas/Usuario/Usuarios.tsx";
 import ProtectedRoute from "./utils/protectedRoute.tsx";
-
-
+import ReporteCajaPage from "./componentes/paginas/Reportes/ReporteCaja.tsx";
+import ChatIAPage from "./componentes/paginas/ChatbotIA/ChaIA.tsx";
+import EstadoPago from "./componentes/paginas/Ventas/EstadoPago.tsx";
 const LazyLogin = lazy(
   () => import("./componentes/paginas/login")
 );
@@ -43,30 +43,31 @@ function App() {
           <Route path="*" element={<h1>No Encontrado</h1>} />
           <Route path="/" element={<LazyLogin />}>  </Route>
           <Route path="/unauthorized" element={<h1>No Tiene Autorizacion</h1>} />
+          <Route path ="/payment-status" element={<EstadoPago/>} />
           <Route path="/registrarUsuario" element={<LazyRegUsuario />} />
           <Route path="/principal/*" element={<Principal />}>
             <Route path="*" element={<h1>No Encontrado</h1>} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="productos" element={<PageProductos />} />
+            <Route path="chatbotIA" element={<ChatIAPage />} />
             <Route path="clientes" element={<Clientes />} />
             <Route path="ventas/registrarVentas" element={<RegistrarVentas />} />
             <Route path="ventas/consultarVentas" element={<ConsultarVentas />} />
             <Route path="proveedores" element={<PageProveedor />} />
-            <Route path="botellas" element={<Botellas />} />
             <Route path="usuarios/permisos" element={<ProtectedRoute requiredPermisos={[2, 3, 4, 5]} element={<PagePermisos />} />}></Route>
             <Route path="usuarios/roles" element={<ProtectedRoute requiredPermisos={[2, 3, 4, 5]} element={<PageRoles />} />}></Route>
             <Route path="usuarios/usuarios" element={<ProtectedRoute
               element={<PageUsuarios />}
               requiredPermisos={[2, 3, 4, 5]}
             />} />
-
+            <Route path="reportes/caja" element={<ProtectedRoute requiredPermisos={[2, 3, 4, 5]} element={<ReporteCajaPage />} />}></Route>
 
           </Route>
 
 
 
         </Routes>
-        <ToastContainer />
+        <ToastContainer style={{ zIndex: 999999 }} />
       </BrowserRouter>
     </Suspense>
   )

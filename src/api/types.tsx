@@ -7,28 +7,23 @@ export interface Unidad {
 }
 
 
-
-
 export interface Usuario {
     id: number;
     username: string;
     email: string;
     password: string;
     rol: Roles
+}
 
+export interface TipoDocumento {
+    id: number;
+    nombre: string;
+    descripcion: string
 
 
 }
 
-export interface TipoDocumento{
-    id:number;
-    nombre:string;
-    descripcion:string
-
-
-}
-
-export interface TiDocResponse{
+export interface TiDocResponse {
     result: TipoDocumento[];
 }
 
@@ -45,17 +40,19 @@ export interface Product {
     id: number;
     nombre: string;
     descripcion?: string;
-    precioCompra: string;
+    precioCompra?: string;
     precioVenta: string;
-    afecta_igv:boolean;
-    unidad: Unidad;
-    categoria: Categoria;
-    proveedor: Proveedor;
-    cantidad: number;
-    isActive: boolean;
+    sku: string,
+    codigoBarras: string,
+    afecta_igv?: boolean;
+    unidad?: Unidad;
+    categoria?: Categoria;
+    proveedor?: Proveedor;
+    cantidad?: number;
+    isActive?: boolean;
     fechaVencimiento?: string; // Puede ser Date si prefieres trabajar con objetos Date
-    fecha_creacion: string; // Puede ser Date
-    fecha_actualizacion: string; // Puede ser Date
+    fecha_creacion?: string; // Puede ser Date
+    fecha_actualizacion?: string; // Puede ser Date
 }
 
 export interface Roles {
@@ -189,17 +186,6 @@ export interface UsuarioPagResponse {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 export interface Cliente {
     id: number;
     nombre: string;
@@ -208,7 +194,7 @@ export interface Cliente {
     direccion?: string;
     correo?: string;
     telefono?: string;
-    es_empresa: boolean
+    es_empresa: boolean;
 
 }
 
@@ -235,23 +221,23 @@ export interface ClientePagResponse {
 
 
 export interface VentaPag {
-  id: number;
-  fecha_venta: string;          // Date en formato ISO que llega como string
-  fecha_facturacion: string | null;
-  fecha_creacion: string;
-  estado: string;
-  total: number;
-  serie: string;
-  numero: string;
-  cliente: {
     id: number;
-    nombre: string;
-  };
+    fecha_venta: string;          // Date en formato ISO que llega como string
+    fecha_facturacion: string | null;
+    fecha_creacion: string;
+    estado: string;
+    total: number;
+    serie: string;
+    numero: string;
+    cliente: {
+        id: number;
+        nombre: string;
+    };
 
-  tipo_comprobante: {
-    id: number;
-    nombre: string;
-  };
+    tipo_comprobante: {
+        id: number;
+        nombre: string;
+    };
 
 
 }
@@ -260,7 +246,7 @@ export interface VentaPag {
 
 
 export interface VentaPagResponse {
-    ventas:  VentaPag[];
+    ventas: VentaPag[];
     totalItems: number;
     totalPages: number;
     currentPage: number;
@@ -275,32 +261,29 @@ export interface VentaIdResponse {
 
 
 export interface Venta {
-  id: number;
-  fecha_venta: string;
-  fecha_facturacion: string | null;
-  fecha_creacion: string;
-  serie: string;
-  numero: number;
-  total: string;
-  estado: string;
-  observacion: string | null;
-  cliente: ClienteResponse;
-  usuario: UsuarioResponse;
-  tipo_comprobante: TipoComprobanteResponse;
-  detalleVentas: DetalleVentaResponse[];
-  pagos: PagoResponse[];
+    id: number;
+    fecha_venta: string;
+    fecha_facturacion: string | null;
+    fecha_creacion: string;
+    serie: string;
+    numero: number;
+    total: string;
+    estado: string;
+    observacion: string | null;
+    cliente: Clientev;
+    usuario: Usuariov;
+    tipo_comprobante: TipoComprobanteResponse;
+    detalleVentas: DetalleVentaResponse[];
+    pagos: Pago[];
 }
 
 // --- Relaciones ---
 
-export interface ClienteResponse {
-  id: number;
-  nombre: string;
-}
 
-export interface UsuarioResponse {
-  id: number;
-  username: string;
+
+export interface Usuariov {
+    id: number;
+    username: string;
 }
 
 
@@ -309,41 +292,41 @@ export interface TipoComprobanteResponse {
 }
 
 export interface TipoComprobante {
-  id: number;
-  nombre: string;
-  codigo_sunat: string;
-  serie: string;
+    id: number;
+    nombre: string;
+    codigo_sunat: string;
+    serie: string;
 }
 
 export interface DetalleVentaResponse {
-  id: number;
-  precio_unitario: string;
-  cantidad: number;
-  subtotal: string;
-  afecta_igv: boolean;
-  igv: string;
-  total: string;
-  producto: ProductoResponse;
+    id: number;
+    precio_unitario: string;
+    cantidad: number;
+    subtotal: string;
+    afecta_igv: boolean;
+    igv: string;
+    total: string;
+    producto: Productov;
 }
 
-export interface ProductoResponse {
-  id: number;
-  nombre: string;
-  precioVenta: string;
+export interface Productov {
+    id: number;
+    nombre: string;
+    precioVenta: string;
 }
 
-export interface PagoResponse {
-  id: number;
-  fecha: string;
-  monto: string;
-  vuelto: string;
-  observacion: string | null;
-  metodoPago: MetodoPago;
+export interface Pago {
+    id: number;
+    fecha: string;
+    monto: string;
+    vuelto: string;
+    observacion: string | null;
+    metodoPago: MetodoPago;
 }
 
 export interface MetodoPago {
-  id: number;
-  nombre: string;
+    id: number;
+    nombre: string;
 }
 
 
@@ -355,13 +338,97 @@ export interface MetodoPagoResponse {
 
 export interface ProximoNumero {
     serie: string;
-    siguiente_numero :number;
+    siguiente_numero: number;
 }
 
 
 
-export interface ProximoNumeroResponse {
- result: ProximoNumero
+export interface Clientev {
+    id: number;
+    nombre: string;
+    numero_documento: string;
+}
+
+export interface FiltroClientesResponse {
+    result: Clientev[]
+
+}
+
+
+
+export interface Productovfiltro {
+    id: number;
+    nombre: string;
+    sku: string;
+    precioVenta: string;
+    cantidad: number;
+    afecta_igv: boolean;
+    fechaVencimiento: String;
+    categoria: Categoria;
+    proveedor: Proveedor;
+}
+
+
+
+export interface FiltroProductosResponse {
+    result: Productovfiltro[]
+
+}
+
+export interface DashboardResumen {
+    totalVentasDia: number;
+    cantidadVentasDia: number;
+    totalVentasMes: number;
+    productosBajoStock: number;
+}
+
+export interface DashboardVentasSemana {
+    fecha: string;
+    total: number;
+}
+
+export interface DashboardProductoTop {
+    nombre: string;
+    cantidad: number;
+}
+
+export interface DashboardUltimaVenta {
+    id: number;
+    hora: string;
+    cliente: string;
+    total: number;
+    estado: string;
+}
+
+export interface DashboardResponse {
+    resumen: DashboardResumen;
+    ventasUltimos7Dias: DashboardVentasSemana[];
+    productosMasVendidos: DashboardProductoTop[];
+    ultimasVentas: DashboardUltimaVenta[];
+}
+
+
+
+export interface IngresoReporte {
+    metodoId: number;
+    metodoNombre: string;
+    fecha: string;
+    total: string;
+}
+
+export interface ReporteIngresosResponse {
+    ingresos: IngresoReporte[];
+    totalItems: number;
+    currentPage: number;
+    pageSize: number;
+    totalPages: number;
+}
+
+
+export interface ChatIAResponse {
+    question: string;
+    answer: string;
+    data: any[];
 }
 
 

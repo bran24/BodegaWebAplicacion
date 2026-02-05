@@ -7,6 +7,7 @@ interface SwitchCustomProps<T extends FieldValues> {
   title: string;
   icon?: React.ReactNode;
   errors?: FieldError;
+  disabled?:boolean;
 }
 
 const SwitchCustom = <T extends FieldValues,>({
@@ -14,6 +15,7 @@ const SwitchCustom = <T extends FieldValues,>({
   name,
   title,
   errors,
+  disabled =false
 }: SwitchCustomProps<T>) => {
 
 
@@ -30,8 +32,9 @@ const SwitchCustom = <T extends FieldValues,>({
             <input
               type="checkbox"
               {...register(name)}
+              disabled={disabled}
               
-              className="peer appearance-none w-11 h-5 bg-slate-100 rounded-full checked:bg-slate-800 cursor-pointer transition-colors duration-300"
+              className={ ` ${disabled ?'bg-neutral-400 opacity-10 cursor-not-allowed' : ''} peer appearance-none w-11 h-5 bg-slate-100 rounded-full checked:bg-slate-800 cursor-pointer transition-colors duration-300`}
             />
             <label className="absolute top-0 left-0 w-5 h-5 bg-white rounded-full border border-slate-300 shadow-sm transition-transform duration-300 peer-checked:translate-x-6 peer-checked:border-slate-800 cursor-pointer" />
           </div>

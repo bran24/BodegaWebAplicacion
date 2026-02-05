@@ -13,6 +13,7 @@ interface FormTextProps<T extends FieldValues> {
   placeholder: string,
   options: object
   children: ReactNode;
+  disabled?: boolean;
 
 
 
@@ -28,7 +29,8 @@ const Dropdown = <T extends FieldValues,>({
   icon,
   placeholder,
   options,
-  children
+  children,
+  disabled
 }: FormTextProps<T>) => {
 
   return (
@@ -45,8 +47,8 @@ const Dropdown = <T extends FieldValues,>({
             {...register(inputName, options)}
             name={inputName}
             id={inputName}
-
-            className="appearance-none bg-white pl-3 py-1.5 text-sm rounded-r-xl w-full ring-1 ring-gray-300 focus:outline-none"
+            disabled={disabled}
+            className={`appearance-none bg-white pl-3 py-1.5 text-sm rounded-r-xl w-full ring-1 ring-gray-300 focus:outline-none ${disabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : ''}`}
           >
             <option value="" >
               {placeholder}

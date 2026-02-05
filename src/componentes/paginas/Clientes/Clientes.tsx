@@ -11,8 +11,7 @@ import { errorAlert, successAlert } from '../../../utils/alertNotify';
 import Dropdown from '../../atomos/formInputs/dropdown';
 import Loader2 from '../../atomos/Loader/loader2';
 import { useApiRegistrarClienteMutation, useApiActualizarClienteMutation, useApiEliminarClienteMutation } from '../../../api/apiSlice';
-
-
+import FormularioCliente, { ClienteFormData } from '../../organismos/Formularios/FormularioCliente';
 
 
 
@@ -23,30 +22,22 @@ interface ClienteTableProps {
     totalItems: number,
     totalPages: number,
     currentPage: number,
-    tipodocumentos : TipoDocumento[]  | undefined;
-    setPage: (pag: number) => void
+    tipodocumentos: TipoDocumento[] | undefined;
+    setPage: (pag: number) => void,
+    setQuery: (query: string | undefined) => void,
+    query: string | undefined
 }
 
 
-const ClienteTable: React.FC<ClienteTableProps> = ({ datos,tipodocumentos, load, err, totalItems,
+const ClienteTable: React.FC<ClienteTableProps> = ({ datos, tipodocumentos, load, err, totalItems,
     totalPages,
     currentPage,
-    setPage }) => {
+    setPage,
+    setQuery,
+    query }) => {
 
 
-    interface ClienteTypes {
-        // id: number;
 
-        nombre: string;
-        tipo_documento?: string;
-        numero_documento?: string;
-        direccion: string;
-        correo: string;
-        telefono: string;
-      
-
-
-    }
     type ApiError = {
         status: number;
         data: {
@@ -81,19 +72,19 @@ const ClienteTable: React.FC<ClienteTableProps> = ({ datos,tipodocumentos, load,
     const {
         register,
         clearErrors,
-  
+
         handleSubmit,
         setValue,
         reset,
         watch,
         formState: { errors },
-    } = useForm<ClienteTypes>({
-  defaultValues: {
-  // puedes agregar más defaults aquí
-  },
-});
+    } = useForm<ClienteFormData>({
+        defaultValues: {
+            // puedes agregar más defaults aquí
+        },
+    });
 
-// const tipoDocumentoSeleccionado = watch("tipo_documento");
+    // const tipoDocumentoSeleccionado = watch("tipo_documento");
 
 
     // useEffect(()=>{
@@ -116,7 +107,8 @@ const ClienteTable: React.FC<ClienteTableProps> = ({ datos,tipodocumentos, load,
             setValue("direccion", selCliente?.direccion || '');
             setValue("correo", selCliente?.correo || '');
             setValue("telefono", selCliente?.telefono || '');
-           
+            setValue("es_empresa", selCliente?.es_empresa || false);
+
 
 
 
@@ -131,6 +123,14 @@ const ClienteTable: React.FC<ClienteTableProps> = ({ datos,tipodocumentos, load,
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selCliente])
+
+
+    function handleBuscarChange(event: React.ChangeEvent<HTMLInputElement>) {
+        const query = event.target.value;
+
+        console.log(query)
+        setQuery(query);
+    }
 
 
 
@@ -149,7 +149,7 @@ const ClienteTable: React.FC<ClienteTableProps> = ({ datos,tipodocumentos, load,
 
     );
 
-    if (!datos || datos.length === 0) return <p>No hay Cliente disponibles.</p>;
+    // if (!datos || datos.length === 0) return <p>No hay Cliente disponibles.</p>;
 
 
 
@@ -161,8 +161,9 @@ const ClienteTable: React.FC<ClienteTableProps> = ({ datos,tipodocumentos, load,
             numero_documento: '',
             direccion: '',
             correo: '',
-            telefono: ''
-         
+            telefono: '',
+            es_empresa: false
+
 
 
 
@@ -173,26 +174,25 @@ const ClienteTable: React.FC<ClienteTableProps> = ({ datos,tipodocumentos, load,
     };
 
 
-    const onSubmit: SubmitHandler<ClienteTypes> = async (dataform) => {
+    const onSubmit: SubmitHandler<ClienteFormData> = async (dataform) => {
 
-        const { nombre, tipo_documento,numero_documento, direccion, correo, telefono} = dataform
+        const { nombre, tipo_documento, numero_documento, direccion, correo, telefono, es_empresa } = dataform;
 
-        let  es_empresa  = false
-
-         if (tipo_documento)
-                {
-                     es_empresa = true;
-                }
 
         if (typeOfPanel === 'Registrar') {
 
 
             try {
 
-
-               
-
-                const jsondata = { nombre, tipo_documento,numero_documento, direccion, correo, telefono,es_empresa }
+                const jsondata = {
+                    nombre,
+                    tipo_documento,
+                    numero_documento,
+                    direccion,
+                    correo,
+                    telefono,
+                    es_empresa: es_empresa || false
+                };
 
                 console.log(jsondata)
                 await apiRegistrarCliente(jsondata).unwrap()
@@ -208,7 +208,7 @@ const ClienteTable: React.FC<ClienteTableProps> = ({ datos,tipodocumentos, load,
                 const apiError = error as ApiError;
                 const errorMessage = apiError.data?.message || 'Error desconocido';
 
-               
+
 
                 errorAlert(errorMessage)
 
@@ -220,9 +220,9 @@ const ClienteTable: React.FC<ClienteTableProps> = ({ datos,tipodocumentos, load,
 
 
 
-                const jsondata = { "id": selCliente?.id, nombre, tipo_documento,numero_documento, direccion, correo, telefono,es_empresa }
+                const jsondata = { "id": selCliente?.id, nombre, tipo_documento, numero_documento, direccion, correo, telefono, es_empresa: es_empresa || false }
 
-                
+
 
                 console.log(jsondata)
                 await apiActualizarCliente(jsondata).unwrap()
@@ -288,9 +288,16 @@ const ClienteTable: React.FC<ClienteTableProps> = ({ datos,tipodocumentos, load,
         <div className="w-full max-w-full h-screen rounded-sm border  bg-white p-3">
             <p className='font-semibold text-4xl my-4'>Cliente</p>
 
+            <div className='w-full md:w-2/12' >
+                <label className="text-sm font-semibold text-gray-700">Buscar</label>
+
+                <input placeholder="Buscar" onChange={handleBuscarChange} value={query || ""} className="border p-2 rounded w-full bg-white" type="text" />
+
+            </div>
+
             <div className='flex justify-end'>
 
-                <div className='mb-4 w-40' >
+                <div className='mb-4 w-auto' >
 
                     <ButtonPrimaryOnclick onClick={() => {
 
@@ -316,7 +323,7 @@ const ClienteTable: React.FC<ClienteTableProps> = ({ datos,tipodocumentos, load,
                         </tr>
                     </thead>
                     <tbody>
-                        {datos.map(client => (
+                        {datos && datos.length > 0 ? datos.map(client => (
                             <tr key={client.id}>
                                 <td className='border border-secundary4'>{client.id || ''}</td>
                                 <td className='border border-secundary4'>{client?.nombre || ''}</td>
@@ -345,7 +352,7 @@ const ClienteTable: React.FC<ClienteTableProps> = ({ datos,tipodocumentos, load,
 
                                 </td>
                             </tr>
-                        ))}
+                        )) : <tr><td colSpan={5} className="text-center">No hay datos disponibles.</td></tr>}
                     </tbody>
                 </table>
 
@@ -397,150 +404,16 @@ const ClienteTable: React.FC<ClienteTableProps> = ({ datos,tipodocumentos, load,
                 onClickSecondOption={handleSubmit(onSubmit)}
             >
 
-
-
-                <div >
-
-                    <h2 className="text-xl font-bold text-center my-3">{typeOfPanel + " Cliente"}
-                    </h2>
-
-                    <form >
-                        <FormTextInput
-                            inputName="nombre"
-                            title="Nombre"
-                            icon={< FaBox />}
-                            placeholder="Ingresar Cliente"
-                            options={{
-                                required: {
-                                    value: true,
-                                    message: 'Cliente requerido',
-                                },
-                                pattern: {
-                                    value: /^[a-zA-Z0-9 áéíóúüÁÉÍÓÚÜñÑ.,-]+$/,
-                                    message: 'Nombre invalido',
-                                },
-                                maxLength: {
-                                    value: 50,
-                                    message: 'No más de 50 caracteres.',
-                                },
-                            }}
-                            register={register}
-                            errors={errors.nombre} type='text'
-
-                        />
-
-
-                         <Dropdown
-                            options={{
-                               required:{value :true,  message: 'Tipo de Documento requerido',}
-
-                               
-                            }}
-                            register={register} errors={errors.tipo_documento} title='Tipo Documento' placeholder='Seleccione Documento' inputName='tipo_documento' icon={< FaBox />} >
-                           
-                            {Array.isArray(tipodocumentos)
-                                && tipodocumentos.map((item) => (
-                                    <option
-                                        key={item.id}
-                                        value={item.id}
-                                        className="capitalize text-gray-700"
-                                    >
-                                        {item.nombre}
-                                    </option>
-                                ))}
-
-                        </Dropdown>
-            
-
-
-                        <FormTextInput
-                            inputName="numero_documento"
-                            title="Numero de Documento"
-                            icon={< FaBox />}
-                            placeholder="Ingresar numero de documento"
-                            options={{ required:{value :true,  message: 'Numero de documento requerido',}
-
-
-                            }}
-                            register={register}
-                            errors={errors.numero_documento} type='text'
-                           
-
-                        />
-
-             
-
-                        <FormTextInput
-                            inputName="telefono"
-                            title="Telefono"
-                            type="text"
-                            icon={<MdOutlineLocalPhone />}
-                            placeholder="Ingresar Telefono"
-                            options={{
-                       
-                                pattern: {
-                                    value: /^\d{9}$/,
-                                    message: 'Teléfono inválido: debe tener 9 dígitos',
-                                },
-                            }}
-                            register={register}
-                            errors={errors.telefono}
-
-                        />
-
-
-                        <FormTextInput
-                            inputName="correo"
-                            title="Correo"
-                            type=""
-                            icon={<MdEmail />}
-                            placeholder="Ingresar Correo"
-                            options={{
-                                required: {
-
-                                },
-                                pattern: {
-                                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                    message: 'Correo invalido',
-                                },
-                            }}
-                            register={register}
-                            errors={errors.correo}
-
-                        />
-
-
-           
-                        <FormTextInput
-                            inputName="direccion"
-                            title="Direccion"
-                            icon={< FaBox />}
-                            placeholder="Ingresar Direccion"
-                            options={{
-
-
-                            }}
-                            register={register}
-                            errors={errors.direccion} type='text'
-
-                        />
+                <FormularioCliente
+                    register={register}
+                    errors={errors}
+                    tipodocumentos={tipodocumentos}
+                    tipoDocumentoSeleccionado={watch("tipo_documento")}
+                    setValue={setValue}
+                />
 
 
 
-
-                        
-                       
-
-
-
-
-
-
-
-                    </form>
-
-
-                </div>
 
 
             </ModalDosOpciones>

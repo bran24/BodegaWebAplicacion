@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { API_URL } from '../config.tsx'
-import { Cliente,ClienteResponse,ClientePagResponse,Categoria, CategoriaResponse, PermisosporTipo, PermisosResponse, ProductPagResponse, Roles, rolPermisos, RolPermisosResponse, RolResponse, Unidad, UnidadResponse, UsuarioPagResponse,Proveedor,ProveedorPagResponse,ProveedorResponse, TipoDocumento, TiDocResponse, VentaPagResponse, VentaIdResponse, VentaId, Venta, MetodoPago, MetodoPagoResponse, TipoComprobante, TipoComprobanteResponse, ProximoNumero, ProximoNumeroResponse } from './types';
+import { Cliente, ClienteResponse, ClientePagResponse, Categoria, CategoriaResponse, PermisosporTipo, PermisosResponse, ProductPagResponse, Roles, rolPermisos, RolPermisosResponse, RolResponse, Unidad, UnidadResponse, UsuarioPagResponse, Proveedor, ProveedorPagResponse, ProveedorResponse, TipoDocumento, TiDocResponse, VentaPagResponse, VentaIdResponse, Venta, MetodoPago, MetodoPagoResponse, TipoComprobante, TipoComprobanteResponse, FiltroClientesResponse, Clientev, Productovfiltro, FiltroProductosResponse, DashboardResponse, ReporteIngresosResponse, ChatIAResponse } from './types';
 import { handleDecrypt } from '../utils/Encriptacion.tsx';
 // Define a service using a base URL and expected endpoints
 
@@ -26,7 +26,7 @@ const baseQuery = fetchBaseQuery({
 export const apiSlice = createApi({
     reducerPath: 'api',
     baseQuery,
-    tagTypes: ['getProductos','getTipoComprobante','getMetodoPago','getUnidad', 'getCategoria', 'getPagProductos', 'getPermisos', 'getRoles', 'getUsuarios','getProveedor','getPagProveedor','getCliente','getPagCliente','getTipoDoc','getVentaId','getPagVentas'],
+    tagTypes: ['getDashboard', 'getFiltroProductos', 'getProductos', 'getFiltroClientes', 'getTipoComprobante', 'getMetodoPago', 'getUnidad', 'getCategoria', 'getPagProductos', 'getPermisos', 'getRoles', 'getUsuarios', 'getProveedor', 'getPagProveedor', 'getCliente', 'getPagCliente', 'getTipoDoc', 'getVentaId', 'getPagVentas', 'getReporteIngresos'],
     endpoints: (builder) => ({
         apiLogin: builder.mutation({
             query: (newTask) => ({
@@ -48,8 +48,8 @@ export const apiSlice = createApi({
 
 
 
-        apiObtenerUsuariosPaginacion: builder.query<UsuarioPagResponse, { page: number, limit: number }>({
-            query: ({ page, limit }) => `/usuario?page=${page}&limit=${limit}`,
+        apiObtenerUsuariosPaginacion: builder.query<UsuarioPagResponse, { page: number, limit: number, query?: string }>({
+            query: ({ page, limit, query }) => `/usuario?page=${page}&limit=${limit}&query=${query}`,
 
             providesTags: ['getUsuarios'],
 
@@ -243,15 +243,15 @@ export const apiSlice = createApi({
             invalidatesTags: ['getPagProveedor'],
         }),
 
-        
-           apiObtenerProveedorPaginacion: builder.query<ProveedorPagResponse, { page: number, limit: number }>({
-            query: ({ page, limit }) => `/proveedorpag?page=${page}&limit=${limit}`,
+
+        apiObtenerProveedorPaginacion: builder.query<ProveedorPagResponse, { page: number, limit: number, query?: string }>({
+            query: ({ page, limit, query }) => `/proveedorpag?page=${page}&limit=${limit}&query=${query}`,
 
             providesTags: ['getPagProveedor'],
 
         }),
 
-        
+
 
 
         apiRegistrarProductos: builder.mutation({
@@ -271,15 +271,15 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ['getPagProductos'],
         }),
-        apiObtenerProductosPaginacion: builder.query<ProductPagResponse, { page: number, limit: number }>({
-            query: ({ page, limit }) => `/productospag?page=${page}&limit=${limit}`,
+        apiObtenerProductosPaginacion: builder.query<ProductPagResponse, { page: number, limit: number, query?: string, categoria?: number, proveedor?: number, fechaVencimiento?: string, ordenStock?: string, all?: string }>({
+            query: ({ page, limit, query, categoria, proveedor, fechaVencimiento, ordenStock, all }) => `/productospag?page=${page}&limit=${limit}&query=${query}&categoria=${categoria}&proveedor=${proveedor}&fechaVencimiento=${fechaVencimiento}&ordenStock=${ordenStock}&all=${all}`,
 
             providesTags: ['getPagProductos'],
 
         }),
-        
 
-           apiObtenerCliente: builder.query<Cliente[], void>({
+
+        apiObtenerCliente: builder.query<Cliente[], void>({
             query: () => '/cliente',
             transformResponse: (response: ClienteResponse) => response.result,
             providesTags: ['getCliente'],
@@ -305,9 +305,9 @@ export const apiSlice = createApi({
             invalidatesTags: ['getPagCliente'],
         }),
 
-        
-           apiObtenerClientePaginacion: builder.query<ClientePagResponse, { page: number, limit: number }>({
-            query: ({ page, limit }) => `/clientepag?page=${page}&limit=${limit}`,
+
+        apiObtenerClientePaginacion: builder.query<ClientePagResponse, { page: number, limit: number, query?: string }>({
+            query: ({ page, limit, query }) => `/clientepag?page=${page}&limit=${limit}&query=${query}`,
 
             providesTags: ['getPagCliente'],
 
@@ -318,23 +318,13 @@ export const apiSlice = createApi({
             query: () => '/tipodoc',
             transformResponse: (response: TiDocResponse) => response.result,
             providesTags: ['getTipoDoc'],
-          
-        }),
-
-
-                 apiObtenerVentasPaginacion: builder.query<VentaPagResponse, { page: number, limit: number }>({
-            query: ({ page, limit }) => `/ventaspag?page=${page}&limit=${limit}`,
-
-            providesTags: ['getPagVentas'],
 
         }),
 
 
-             apiObtenerVenta: builder.query<Venta, void>({
-            query: () => '/venta',
-            transformResponse: (response: VentaIdResponse) => response.result,
-            providesTags: ['getVentaId'],
-        }),
+
+
+
 
 
 
@@ -343,45 +333,100 @@ export const apiSlice = createApi({
             invalidatesTags: ['getPagVentas']
         }),
 
-        
+
+
+        apiObtenerMetodoPago: builder.query<MetodoPago[], void>({
+            query: () => '/metodopagos',
+            transformResponse: (response: MetodoPagoResponse) => response.result,
+            providesTags: ['getMetodoPago'],
+
+        }),
+
+
+        apiObtenerTipoComprobante: builder.query<TipoComprobante[], void>({
+            query: () => '/tipocomprobantes',
+            transformResponse: (response: TipoComprobanteResponse) => response.result,
+            providesTags: ['getTipoComprobante'],
+
+        }),
+
+
+
+
+
+
+
+        apiObtenerFiltroClientes: builder.query<Clientev[], { query: string }>({
+            query: ({ query }) => `/clientefiltro?query=${query}`,
+            transformResponse: (response: FiltroClientesResponse) => response.result,
+            providesTags: ['getFiltroClientes'],
+
+        }),
+
+        apiObtenerFiltroProductos: builder.query<Productovfiltro[], { query?: string, categoria?: string }>({
+            query: ({ query, categoria }) => `/productofiltro?query=${query}&categoria=${categoria}`,
+            transformResponse: (response: FiltroProductosResponse) => response.result,
+            providesTags: ['getFiltroProductos'],
+
+        }),
+
+        apiObtenerVentasPaginacion: builder.query<VentaPagResponse, { estado?: string, tipo_comprobanteid?: number, fechaInicio?: string, fechaFin?: string, page: number, limit: number, search?: string, all?: string }>({
+            query: ({ page, limit, estado, tipo_comprobanteid, fechaInicio, fechaFin, search, all }) => `/ventaspag?estado=${estado}&tipo_comprobanteid=${tipo_comprobanteid}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}&page=${page}&limit=${limit}&search=${search}&all=${all}`,
+            providesTags: ['getPagVentas'],
+
+        }),
+
+
+
+        apiObtenerVenta: builder.mutation({
+            query: (id: number) => ({
+                url: `venta/${id}`, // Incluye el ID del producto en la URL
+                method: "GET",
+            })
+
+        }),
+
+
+
+
+
         apiActualizarEstadoVenta: builder.mutation({
-            query: (newtask) => ({ url: "facturarventa", method: "POST", body: newtask }),
+            query: (newtask) => ({ url: "/cambiarEstadoVenta", method: "POST", body: newtask }),
             invalidatesTags: ['getPagVentas']
         }),
 
 
-        
-        apiObtenerMetodoPago: builder.query<MetodoPago[], void>({
-            query: () => '/metodopagos',
-            transformResponse: (response: MetodoPagoResponse) => response.result,
-            providesTags: ['getMetodoPago'], 
-           
+
+        apiObtenerReporteIngresos: builder.query<ReporteIngresosResponse, { page: number, limit: number, fechaInicio?: string, fechaFin?: string, metodoPago?: number, all?: string }>({
+            query: ({ page, limit, fechaInicio, fechaFin, metodoPago, all }) => `/reporte/ingresos?page=${page}&limit=${limit}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}&metodoPago=${metodoPago}&all=${all}`,
+            providesTags: ['getReporteIngresos'],
+        }),
+
+        apiObtenerDashboard: builder.query<DashboardResponse, void>({
+            query: () => '/dashboard',
+            providesTags: ['getDashboard'],
+
+        }),
+
+        apiObtenerChatIA: builder.mutation<ChatIAResponse, { question: string }>({
+            query: (newtask) => ({ url: "chatia", method: "POST", body: newtask }),
+
         }),
 
 
-                apiObtenerTipoComprobante: builder.query<TipoComprobante[], void>({
-            query: () => '/tipocomprobantes',
-            transformResponse: (response: TipoComprobanteResponse) => response.result,
-            providesTags: ['getTipoComprobante'],
-          
+
+               apiRegistrarMercadoPago: builder.mutation({
+            query: (newtask) => ({ url: "process-payment", method: "POST", body: newtask })
+       
         }),
 
 
-        
 
 
-          apiObtenerProximoNumero: builder.query<ProximoNumero, void>({
-            query: () => '/venta/proximo-numero',
-            transformResponse: (response: ProximoNumeroResponse) => response.result,
-        
-        }),
-
-
-   
 
 
 
     }),
 })
 
-export const {useApiObtenerProximoNumeroQuery,useApiObtenerMetodoPagoQuery,useApiObtenerTipoComprobanteQuery,useApiObtenerVentaQuery,useApiObtenerVentasPaginacionQuery,useApiRegistrarVentaMutation,useApiActualizarEstadoVentaMutation ,useApiObtenerTipoDocQuery,useApiRegistrarClienteMutation,useApiObtenerClienteQuery,useApiObtenerClientePaginacionQuery,useApiActualizarClienteMutation,useApiEliminarClienteMutation,useApiObtenerProveedorQuery,useApiObtenerProveedorPaginacionQuery,useApiRegistrarProveedorMutation,useApiActualizarProveedorMutation,useApiEliminarProveedorMutation,useApiLoginMutation, useApiCrearUsuarioMutation, useApiRegistrarProductosMutation, useApiObtenerCategoriaQuery, useApiObtenerUnidadQuery, useApiActualizarProductosMutation, useApiEliminarProductosMutation, useApiObtenerProductosPaginacionQuery, useApiEliminarRolMutation, useApiObtenerPermisosQuery, useApiObtenerRolesQuery, useApiObtenerRolPermisosQuery, useApiRegistrarRolMutation, useApiRegistrarRolPermisoMutation, useApiActualizarPermisoMutation, useApiActualizarRolMutation, useApiEliminarUsuarioMutation, useApiActualizarUsuarioMutation, useApiObtenerUsuariosPaginacionQuery, useApiObtenerPermisosPorRolMutation, useApiActualizarRolPermisoMutation, useApiEliminarRolPermisoMutation } = apiSlice
+export const {useApiRegistrarMercadoPagoMutation,useApiObtenerChatIAMutation, useApiObtenerDashboardQuery, useApiActualizarEstadoVentaMutation, useApiObtenerFiltroProductosQuery, useApiObtenerFiltroClientesQuery, useApiObtenerMetodoPagoQuery, useApiObtenerTipoComprobanteQuery, useApiObtenerVentaMutation, useApiObtenerVentasPaginacionQuery, useApiRegistrarVentaMutation, useApiObtenerTipoDocQuery, useApiRegistrarClienteMutation, useApiObtenerClienteQuery, useApiObtenerClientePaginacionQuery, useApiActualizarClienteMutation, useApiEliminarClienteMutation, useApiObtenerProveedorQuery, useApiObtenerProveedorPaginacionQuery, useApiRegistrarProveedorMutation, useApiActualizarProveedorMutation, useApiEliminarProveedorMutation, useApiLoginMutation, useApiCrearUsuarioMutation, useApiRegistrarProductosMutation, useApiObtenerCategoriaQuery, useApiObtenerUnidadQuery, useApiActualizarProductosMutation, useApiEliminarProductosMutation, useApiObtenerProductosPaginacionQuery, useApiEliminarRolMutation, useApiObtenerPermisosQuery, useApiObtenerRolesQuery, useApiObtenerRolPermisosQuery, useApiRegistrarRolMutation, useApiRegistrarRolPermisoMutation, useApiActualizarPermisoMutation, useApiActualizarRolMutation, useApiEliminarUsuarioMutation, useApiActualizarUsuarioMutation, useApiObtenerUsuariosPaginacionQuery, useApiObtenerPermisosPorRolMutation, useApiActualizarRolPermisoMutation, useApiEliminarRolPermisoMutation, useApiObtenerReporteIngresosQuery, useLazyApiObtenerReporteIngresosQuery, useLazyApiObtenerVentasPaginacionQuery, useLazyApiObtenerProductosPaginacionQuery } = apiSlice

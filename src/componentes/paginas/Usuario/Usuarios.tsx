@@ -21,6 +21,8 @@ interface UsuarioTableProps {
     currentPage: number,
     datosRoles: Roles[],
     setPage: (pag: number) => void
+    query: string | undefined,
+    setQuery: (query: string | undefined) => void
 
 }
 
@@ -28,6 +30,8 @@ const UsuarioTable: React.FC<UsuarioTableProps> = ({ datos, load, err,
     totalPages,
     currentPage,
     datosRoles,
+    query,
+    setQuery,
     setPage }) => {
 
 
@@ -100,9 +104,16 @@ const UsuarioTable: React.FC<UsuarioTableProps> = ({ datos, load, err,
         }
 
 
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selUsuario])
+
+    function handleBuscarChange(event: React.ChangeEvent<HTMLInputElement>) {
+        const query = event.target.value;
+
+        console.log(query)
+        setQuery(query);
+    }
+
 
 
     if (load) return <Loader2 />;
@@ -118,7 +129,7 @@ const UsuarioTable: React.FC<UsuarioTableProps> = ({ datos, load, err,
 
     );
 
-    if (!datos || datos.length === 0) return <p>No hay usuarios disponibles.</p>;
+    // if (!datos || datos.length === 0) return <p>No hay usuarios disponibles.</p>;
 
 
 
@@ -240,6 +251,15 @@ const UsuarioTable: React.FC<UsuarioTableProps> = ({ datos, load, err,
         <div className="w-full max-w-full h-screen rounded-sm border  bg-white p-3">
             <p className='font-semibold text-4xl my-4'>Usuarios</p>
 
+
+
+            <div className='w-full md:w-2/12' >
+                <label className="text-sm font-semibold text-gray-700">Buscar</label>
+
+                <input placeholder="Buscar" onChange={handleBuscarChange} value={query || ""} className="border p-2 rounded w-full bg-white" type="text" />
+
+            </div>
+
             <div className='flex justify-end'>
 
                 <div className='mb-4 w-40' >
@@ -269,7 +289,7 @@ const UsuarioTable: React.FC<UsuarioTableProps> = ({ datos, load, err,
                         </tr>
                     </thead>
                     <tbody>
-                        {datos.map(usuario => (
+                        {datos && datos.length > 0 ? datos.map(usuario => (
                             <tr key={usuario.id}>
                                 <td className='border border-secundary4'>{usuario.id || ''}</td>
                                 <td className='border border-secundary4'>{usuario.username || ''}</td>
@@ -300,7 +320,7 @@ const UsuarioTable: React.FC<UsuarioTableProps> = ({ datos, load, err,
 
                                 </td>
                             </tr>
-                        ))}
+                        )) : <tr><td colSpan={5} className="text-center">No hay datos disponibles.</td></tr>}
                     </tbody>
                 </table>
 
