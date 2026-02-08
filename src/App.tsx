@@ -43,24 +43,24 @@ function App() {
           <Route path="*" element={<h1>No Encontrado</h1>} />
           <Route path="/" element={<LazyLogin />}>  </Route>
           <Route path="/unauthorized" element={<h1>No Tiene Autorizacion</h1>} />
-          <Route path ="/payment-status" element={<EstadoPago/>} />
+          <Route path="/payment-status" element={<EstadoPago />} />
           <Route path="/registrarUsuario" element={<LazyRegUsuario />} />
           <Route path="/principal/*" element={<Principal />}>
             <Route path="*" element={<h1>No Encontrado</h1>} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="productos" element={<PageProductos />} />
-            <Route path="chatbotIA" element={<ChatIAPage />} />
-            <Route path="clientes" element={<Clientes />} />
-            <Route path="ventas/registrarVentas" element={<RegistrarVentas />} />
-            <Route path="ventas/consultarVentas" element={<ConsultarVentas />} />
-            <Route path="proveedores" element={<PageProveedor />} />
-            <Route path="usuarios/permisos" element={<ProtectedRoute requiredPermisos={[2, 3, 4, 5]} element={<PagePermisos />} />}></Route>
-            <Route path="usuarios/roles" element={<ProtectedRoute requiredPermisos={[2, 3, 4, 5]} element={<PageRoles />} />}></Route>
+            <Route path="dashboard" element={<ProtectedRoute requiredPermisos={['DASHBOARD_VER']} element={<Dashboard />} />} />
+            <Route path="productos" element={<ProtectedRoute requiredPermisos={['PRODUCTOS_VER']} element={<PageProductos />} />} />
+            <Route path="chatbotIA" element={<ProtectedRoute requiredPermisos={['ASISTENTE_VER']} element={<ChatIAPage />} />} />
+            <Route path="clientes" element={<ProtectedRoute requiredPermisos={['CLIENTES_VER']} element={<Clientes />} />} />
+            <Route path="ventas/registrarVentas" element={<ProtectedRoute requiredPermisos={['VENTAS_CREAR']} element={<RegistrarVentas />} />} />
+            <Route path="ventas/consultarVentas" element={<ProtectedRoute requiredPermisos={['VENTAS_VER']} element={<ConsultarVentas />} />} />
+            <Route path="proveedores" element={<ProtectedRoute requiredPermisos={['PROVEEDORES_VER']} element={<PageProveedor />} />} />
+            <Route path="usuarios/permisos" element={<ProtectedRoute requiredPermisos={['PERMISOS_VER']} element={<PagePermisos />} />}></Route>
+            <Route path="usuarios/roles" element={<ProtectedRoute requiredPermisos={['ROLES_VER']} element={<PageRoles />} />}></Route>
             <Route path="usuarios/usuarios" element={<ProtectedRoute
               element={<PageUsuarios />}
-              requiredPermisos={[2, 3, 4, 5]}
+              requiredPermisos={['USUARIOS_VER']}
             />} />
-            <Route path="reportes/caja" element={<ProtectedRoute requiredPermisos={[2, 3, 4, 5]} element={<ReporteCajaPage />} />}></Route>
+            <Route path="reportes/caja" element={<ProtectedRoute requiredPermisos={['REPORTES_VER']} element={<ReporteCajaPage />} />}></Route>
 
           </Route>
 

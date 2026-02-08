@@ -11,7 +11,7 @@ export interface UserState {
     username: string,
     email: string,
     rol: rol | null,
-    permisos: number[]
+    permisos: string[]
 
 
 
@@ -38,7 +38,7 @@ const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        login: (state, action: PayloadAction<{ id: number, username: string, email: string, rol: rol, permisos: number[] }>) => {
+        login: (state, action: PayloadAction<{ id: number, username: string, email: string, rol: rol, permisos: string[] }>) => {
             const userData = action.payload;
             localStorage.setItem('user', JSON.stringify(userData));
             // state.id = action.payload.id;

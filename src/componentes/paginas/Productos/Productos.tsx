@@ -15,7 +15,7 @@ import { useApiEliminarProductosMutation, useApiActualizarProductosMutation, use
 import SwitchCustom from '../../atomos/checkbox/switchCustom';
 import { generateProductsPDF } from '../../../utils/generateProductsPDF';
 import { FaFilePdf, FaSpinner } from 'react-icons/fa';
-
+import { useAppSelector } from "../../../hook/useAppSelector";
 interface ProductoTableProps {
     datos: Product[] | undefined;
     load: boolean;
@@ -108,6 +108,7 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
     };
 
     const [triggerGetProductos] = useLazyApiObtenerProductosPaginacionQuery();
+    const userPermisos = useAppSelector((state) => state.user.permisos);
 
     const handleGenerarPDF = async () => {
         if (datos && datos.length === 0) {
@@ -470,19 +471,20 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
                     </button>
                 </div>
 
+                {userPermisos?.includes("PRODUCTOS_CREAR") && (
+                    <div className='mb-4 w-auto' >
 
-                <div className='mb-4 w-auto' >
+                        <ButtonPrimaryOnclick onClick={() => {
 
-                    <ButtonPrimaryOnclick onClick={() => {
-
-                        setTypeOfPanel("Registrar")
-                        handleOpenModal()
+                            setTypeOfPanel("Registrar")
+                            handleOpenModal()
 
 
-                    }} title='Registrar Producto' disable={false}></ButtonPrimaryOnclick>
+                        }} title='Registrar Producto' disable={false}></ButtonPrimaryOnclick>
 
-                </div>
+                    </div>
 
+                )}
             </div>
 
 
@@ -521,20 +523,23 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
                                         new Date(product.fechaVencimiento).toISOString().split('T')[0] : ''}</td>
                                 <td className='border border-secundary4 '>
                                     <div className='flex flex-row justify-center gap-3 my-1'>
+                                        {userPermisos?.includes("PRODUCTOS_EDITAR") && (
 
-                                        <MdEdit title="Editar Producto" onClick={() => {
+                                            <MdEdit title="Editar Producto" onClick={() => {
 
 
-                                            setTypeOfPanel("Actualizar")
-                                            setSelProducto(product)
-                                            handleOpenModal()
+                                                setTypeOfPanel("Actualizar")
+                                                setSelProducto(product)
+                                                handleOpenModal()
 
-                                        }} className='bg-secundary2 hover:bg-secundary4 p-1 text-2xl rounded'></MdEdit>
-                                        <MdDelete title="Eliminar Producto" className='bg-secundary2  hover:bg-secundary4 p-1 text-2xl rounded' onClick={() => {
-                                            setIdToDelete(product.id)
-                                            handleConfirmationOpenModal();
+                                            }} className='bg-secundary2 hover:bg-secundary4 p-1 text-2xl rounded'></MdEdit>)
+                                        }
+                                        {userPermisos?.includes("PRODUCTOS_ELIMINAR") && (
+                                            <MdDelete title="Eliminar Producto" className='bg-secundary2  hover:bg-secundary4 p-1 text-2xl rounded' onClick={() => {
+                                                setIdToDelete(product.id)
+                                                handleConfirmationOpenModal();
 
-                                        }} ></MdDelete>
+                                            }} ></MdDelete>)}
 
 
                                     </div>

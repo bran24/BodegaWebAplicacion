@@ -20,10 +20,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     const { pathname } = location
 
     const userPermisos = useAppSelector((state) => state.user.permisos);
-    const requiredPermisosUsuario = [2, 3, 4, 5]
-    const hasRequiredPermisosUs = requiredPermisosUsuario.every((permiso) =>
-        userPermisos.includes(permiso)
-    );
+
     const trigger = useRef<any>(null)
     const sidebar = useRef<any>(null);
 
@@ -104,7 +101,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
                     <ul className="mb-6 flex flex-col gap-1.5">
 
-                        <li>
+                        {userPermisos.includes("DASHBOARD_VER") && <li>
                             <NavLink
                                 to="/principal/dashboard"
                                 className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-primary2  ${pathname.includes('dashboard') &&
@@ -114,8 +111,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 < MdDashboard />
                                 Dashboard
                             </NavLink>
-                        </li>
-                        <li>
+                        </li>}
+                        {userPermisos.includes('PRODUCTOS_VER') && <li>
                             <NavLink
                                 to="/principal/productos"
                                 className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-primary2  ${pathname.includes('productos') &&
@@ -125,8 +122,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 <  FaBox />
                                 Productos
                             </NavLink>
-                        </li>
-                        <li>
+                        </li>}
+                        {userPermisos.includes('CLIENTES_VER') && <li>
                             <NavLink
                                 to="/principal/clientes"
                                 className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-primary2  ${pathname.includes('clientes') &&
@@ -136,39 +133,40 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 < FaRegUser />
                                 Clientes
                             </NavLink>
-                        </li>
+                        </li>}
 
 
-                        {hasRequiredPermisosUs && (
-                            <SidebarLinkGroup
-                                activeCondition={
-                                    pathname === '/principal/ventas' || pathname.includes('ventas')
-                                }
-                            >
-                                {(handleClick, open) => (
-                                    <>
-                                        <NavLink
-                                            to="#"
-                                            className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out hover:bg-primary2 ${(pathname === '/principal/ventas/registrarVentas' ||
-                                                pathname === '/principal/ventas/consultarVentas') &&
-                                                'bg-primary'
+
+                        {(userPermisos.includes('VENTAS_CREAR') || userPermisos.includes('VENTAS_VER')) && <SidebarLinkGroup
+                            activeCondition={
+                                pathname === '/principal/ventas' || pathname.includes('ventas')
+                            }
+                        >
+                            {(handleClick, open) => (
+                                <>
+                                    <NavLink
+                                        to="#"
+                                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out hover:bg-primary2 ${(pathname === '/principal/ventas/registrarVentas' ||
+                                            pathname === '/principal/ventas/consultarVentas') &&
+                                            'bg-primary'
+                                            }`}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            sidebarExpanded ? handleClick() : setSidebarExpanded(true);
+                                        }}
+                                    >
+                                        <FaRegUser />
+                                        Ventas
+                                        <FaAngleUp
+                                            className={`absolute right-4 top-1/2 -translate-y-1/2 ${open && 'rotate-180'
                                                 }`}
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                sidebarExpanded ? handleClick() : setSidebarExpanded(true);
-                                            }}
-                                        >
-                                            <FaRegUser />
-                                            Ventas
-                                            <FaAngleUp
-                                                className={`absolute right-4 top-1/2 -translate-y-1/2 ${open && 'rotate-180'
-                                                    }`}
-                                            />
-                                        </NavLink>
+                                        />
+                                    </NavLink>
 
-                                        {/* Dropdown con ambas opciones */}
-                                        <div className={`translate transform overflow-hidden ${!open && 'hidden'}`}>
-                                            <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                                    {/* Dropdown con ambas opciones */}
+                                    <div className={`translate transform overflow-hidden ${!open && 'hidden'}`}>
+                                        <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                                            {userPermisos.includes('VENTAS_CREAR') && (
                                                 <li>
                                                     <NavLink
                                                         to="/principal/ventas/registrarVentas"
@@ -178,25 +176,23 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                                         }
                                                     >Registrar Ventas
                                                     </NavLink>
-                                                </li>
+                                                </li>)}
 
-                                                <li>
-                                                    <NavLink
-                                                        to="/principal/ventas/consultarVentas"
-                                                        className={({ isActive }) =>
-                                                            'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-secundary3 duration-300 ease-in-out hover:text-primary2 ' +
-                                                            (isActive && '!text-primary2')
-                                                        }
-                                                    >Consultar Ventas
-                                                    </NavLink>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </>
-                                )}
-                            </SidebarLinkGroup>
-                        )}
-
+                                            {userPermisos.includes('VENTAS_VER') && (<li>
+                                                <NavLink
+                                                    to="/principal/ventas/consultarVentas"
+                                                    className={({ isActive }) =>
+                                                        'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-secundary3 duration-300 ease-in-out hover:text-primary2 ' +
+                                                        (isActive && '!text-primary2')
+                                                    }
+                                                >Consultar Ventas
+                                                </NavLink>
+                                            </li>)}
+                                        </ul>
+                                    </div>
+                                </>
+                            )}
+                        </SidebarLinkGroup>}
 
 
 
@@ -204,7 +200,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
 
 
-                        <li>
+
+
+                        {userPermisos.includes('PROVEEDORES_VER') && <li>
                             <NavLink
                                 to="/principal/proveedores"
                                 className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-primary2  ${pathname.includes('proveedores') &&
@@ -214,12 +212,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 < FaBox />
                                 Proveedores
                             </NavLink>
-                        </li>
+                        </li>}
 
 
 
 
-                        {hasRequiredPermisosUs && <SidebarLinkGroup
+                        {(userPermisos.includes("USUARIOS_VER") || userPermisos.includes("ROLES_VER") || userPermisos.includes("PERMISOS_VER")) && <SidebarLinkGroup
                             activeCondition={
                                 pathname === '/principal/usuarios' || pathname.includes('usuarios')
                             }
@@ -254,8 +252,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
                                             </NavLink>
                                             {/* <!-- Dropdown Menu Start --> */}
-
-                                            <div
+                                            {userPermisos.includes('USUARIOS_VER') && <div
                                                 className={`translate transform overflow-hidden ${!open && 'hidden'
                                                     }`}
                                             >
@@ -272,12 +269,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                                         </NavLink>
                                                     </li>
                                                 </ul>
-                                            </div>
+                                            </div>}
 
 
 
 
-                                            <div
+                                            {userPermisos.includes('ROLES_VER') && <div
                                                 className={`translate transform overflow-hidden ${!open && 'hidden'
                                                     }`}
                                             >
@@ -294,8 +291,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                                         </NavLink>
                                                     </li>
                                                 </ul>
-                                            </div>
-                                            <div
+                                            </div>}
+
+                                            {userPermisos.includes('PERMISOS_VER') && <div
                                                 className={`translate transform overflow-hidden ${!open && 'hidden'
                                                     }`}
                                             >
@@ -312,7 +310,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                                         </NavLink>
                                                     </li>
                                                 </ul>
-                                            </div>
+                                            </div>}
 
 
                                         </>
@@ -329,8 +327,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         </SidebarLinkGroup>}
 
 
-
-                        <SidebarLinkGroup
+                        {userPermisos.includes('REPORTES_VER') && <SidebarLinkGroup
                             activeCondition={
                                 pathname === '/principal/reportes' || pathname.includes('reportes')
                             }
@@ -394,10 +391,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             }
 
 
-                        </SidebarLinkGroup>
+                        </SidebarLinkGroup>}
 
 
-                        <li>
+                        {userPermisos.includes('ASISTENTE_VER') && <li>
                             <NavLink
                                 to="/principal/chatbotIA"
                                 className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-primary2  ${pathname.includes('chatIA') &&
@@ -408,7 +405,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                                 ChatBot IA
                             </NavLink>
                         </li>
-
+                        }
 
                     </ul>
 

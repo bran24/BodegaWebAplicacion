@@ -12,7 +12,7 @@ import { errorAlert, successAlert } from '../../../utils/alertNotify';
 import Dropdown from '../../atomos/formInputs/dropdown';
 import Loader2 from '../../atomos/Loader/loader2';
 import { useApiRegistrarProveedorMutation, useApiActualizarProveedorMutation, useApiEliminarProveedorMutation, useApiObtenerProveedorPaginacionQuery } from '../../../api/apiSlice';
-
+import { useAppSelector } from '../../../hook/useAppSelector';
 
 
 interface ProveedorTableProps {
@@ -55,7 +55,7 @@ const ProveedorTable: React.FC<ProveedorTableProps> = ({ datos, load, err, total
             message: string;
         };
     }
-
+    const permisosUsuario = useAppSelector((state) => state.user.permisos);
     const [apiEliminarProveedor] = useApiEliminarProveedorMutation()
     const [apiRegistrarProveedor] = useApiRegistrarProveedorMutation()
     const [apiActualizarProveedor] = useApiActualizarProveedorMutation()
@@ -272,22 +272,23 @@ const ProveedorTable: React.FC<ProveedorTableProps> = ({ datos, load, err, total
                 <input placeholder="Buscar" onChange={handleBuscarChange} value={query || ""} className="border p-2 rounded w-full bg-white" type="text" />
 
             </div>
+            {permisosUsuario.includes("PROVEEDORES_CREAR") && (
+                <div className='flex justify-end'>
 
-            <div className='flex justify-end'>
+                    <div className='mb-4 w-auto' >
 
-                <div className='mb-4 w-auto' >
+                        <ButtonPrimaryOnclick onClick={() => {
 
-                    <ButtonPrimaryOnclick onClick={() => {
-
-                        setTypeOfPanel("Registrar")
-                        handleOpenModal()
+                            setTypeOfPanel("Registrar")
+                            handleOpenModal()
 
 
-                    }} title='Registrar Proveedor' disable={false}></ButtonPrimaryOnclick>
+                        }} title='Registrar Proveedor' disable={false}></ButtonPrimaryOnclick>
+
+                    </div>
 
                 </div>
-
-            </div>
+            )}
 
             <div className='max-h-80 overflow-auto'>
                 <table className="table-auto border shadow-sm border-secundary4 w-full bg-white text-center">
@@ -310,20 +311,23 @@ const ProveedorTable: React.FC<ProveedorTableProps> = ({ datos, load, err, total
                                 <td className='border border-secundary4 '>
 
                                     <div className='flex flex-row justify-center gap-3 my-1'>
+                                        {permisosUsuario.includes("PROVEEDORES_EDITAR") && (
+                                            <MdEdit title="Editar Proveedor" onClick={() => {
 
-                                        <MdEdit title="Editar Proveedor" onClick={() => {
 
+                                                setTypeOfPanel("Actualizar")
+                                                setSelProveedor(product)
+                                                handleOpenModal()
 
-                                            setTypeOfPanel("Actualizar")
-                                            setSelProveedor(product)
-                                            handleOpenModal()
+                                            }} className='bg-secundary2 hover:bg-secundary4 p-1 text-2xl rounded'></MdEdit>
+                                        )}
+                                        {permisosUsuario.includes("PROVEEDORES_ELIMINAR") && (
+                                            <MdDelete title="Eliminar Proveedor" className='bg-secundary2  hover:bg-secundary4 p-1 text-2xl rounded' onClick={() => {
+                                                setIdToDelete(product.id)
+                                                handleConfirmationOpenModal();
 
-                                        }} className='bg-secundary2 hover:bg-secundary4 p-1 text-2xl rounded'></MdEdit>
-                                        <MdDelete title="Eliminar Proveedor" className='bg-secundary2  hover:bg-secundary4 p-1 text-2xl rounded' onClick={() => {
-                                            setIdToDelete(product.id)
-                                            handleConfirmationOpenModal();
-
-                                        }} ></MdDelete>
+                                            }} ></MdDelete>
+                                        )}
 
 
                                     </div>

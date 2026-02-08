@@ -11,7 +11,7 @@ import { successAlert, errorAlert, warningAlert } from "../../../utils/alertNoti
 import { generateSalesReportPDF } from '../../../utils/generateSalesReportPDF';
 import { FaFilePdf, FaSpinner } from 'react-icons/fa';
 import Loader2 from '../../atomos/Loader/loader2';
-
+import { useAppSelector } from "../../../hook/useAppSelector";
 
 interface ConsultarVentasProps {
     datos: VentaPag[] | undefined;
@@ -45,7 +45,7 @@ type ApiError = {
 
 
 const ConsultarVentas = ({ datos, load, err, setPage, tipoComprobanteVentaData, tiposEstadoVenta, totalItemsp, totalPagesp, currentPagep, setFechaInicio, setFechaFin, setEstado, setTipoComprobanteId, setSearch, fechaInicio, fechaFin, estado, tipo_comprobanteid, search }: ConsultarVentasProps) => {
-
+    const userPermisos = useAppSelector((state) => state.user.permisos);
 
     const [modalConfirmationOpen, setModalConfirmationOpen] = useState(false);
     const [idVenta, setIdVenta] = useState(-1);
@@ -312,9 +312,9 @@ const ConsultarVentas = ({ datos, load, err, setPage, tipoComprobanteVentaData, 
                                     <td className="border border-secundary4 px-4 py-2">{venta.total}</td>
                                     <td className="border border-secundary4 px-4 py-2">
                                         <div className="flex space-x-2 items-center justify-center">
-                                            <FaEye title="Ver" className="text-yellow-500 cursor-pointer text-xl" onClick={() => { consultarVentaClick(venta.id) }} />
-                                            <FaMoneyBill title="Facturar" className="text-green-500 cursor-pointer text-xl" onClick={() => { setIdVenta(venta.id); setIdVentaEstado('FACTURADO'); handleConfirmationOpenModal() }} />
-                                            <TiDelete title="Anular" className="text-red-500 cursor-pointer text-xl" onClick={() => { setIdVenta(venta.id); setIdVentaEstado('ANULADO'); handleConfirmationOpenModal() }} />
+                                            {userPermisos.includes("VENTAS_VER") && <FaEye title="Ver" className="text-yellow-500 cursor-pointer text-xl" onClick={() => { consultarVentaClick(venta.id) }} />}
+                                            {userPermisos.includes("VENTAS_EDITAR") && <FaMoneyBill title="Facturar" className="text-green-500 cursor-pointer text-xl" onClick={() => { setIdVenta(venta.id); setIdVentaEstado('FACTURADO'); handleConfirmationOpenModal() }} />}
+                                            {userPermisos.includes("VENTAS_ANULAR") && <TiDelete title="Anular" className="text-red-500 cursor-pointer text-xl" onClick={() => { setIdVenta(venta.id); setIdVentaEstado('ANULADO'); handleConfirmationOpenModal() }} />}
 
 
                                         </div>

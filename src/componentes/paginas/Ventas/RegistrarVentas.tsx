@@ -10,7 +10,7 @@ import ButtonPrimaryOnclick from '../../atomos/buttons/buttonPrimaryOnclick';
 import { errorAlert, successAlert, warningAlert } from '../../../utils/alertNotify';
 import Dropdown from '../../atomos/formInputs/dropdown';
 import Loader2 from '../../atomos/Loader/loader2';
-import { useApiRegistrarMercadoPagoMutation, useApiRegistrarVentaMutation, useApiObtenerFiltroClientesQuery, useApiRegistrarClienteMutation, useApiObtenerTipoDocQuery, useApiObtenerFiltroProductosQuery } from '../../../api/apiSlice';
+import { useApiRegistrarMercadoPagoMutation, useApiRegistrarVentaMutation, useApiObtenerFiltroClientesQuery, useApiRegistrarClienteMutation, useApiObtenerTipoDocQuery, useApiObtenerFiltroProductosQuery, useApiObtenerVentaMutation } from '../../../api/apiSlice';
 import FormularioCliente, { ClienteFormData } from "../../organismos/Formularios/FormularioCliente";
 import { useAppSelector } from '../../../hook/useAppSelector';
 import SwitchCustom from "../../atomos/checkbox/switchCustom";
@@ -18,6 +18,7 @@ import { roundToTwoDecimals } from "../../../utils/documentHelpers";
 import { initMercadoPago, CardPayment } from '@mercadopago/sdk-react';
 import { PUBLIC_KEY_MERCADOPAGO } from '../../../config'
 import yapeimg from '../../../assets/img/yape-icon.png'
+import { generateInvoicePDF } from "../../../utils/generateInvoicePDF";
 
 if (PUBLIC_KEY_MERCADOPAGO) {
     initMercadoPago(PUBLIC_KEY_MERCADOPAGO, { locale: 'es-PE' });
@@ -130,6 +131,12 @@ const RegistrarVentasPag: React.FC<RegistrarVentas> = ({ productos, categoriaPro
     const [ApiRegistrarMercadoPago] = useApiRegistrarMercadoPagoMutation()
 
 
+    const [datosDetalleVentaSel, setDatosDetalleVentaSel] = useState<any>(undefined);
+    const [modalDetalleVentaOpen, setModalDetalleVentaOpen] = useState(false);
+    const handleDetalleVentaCloseModal = () => setModalDetalleVentaOpen(false);
+    const handleDetalleVentaOpenModal = () => setModalDetalleVentaOpen(true);
+
+
     const [searchTerm, setSearchTerm] = useState('');
     const [searchTermProd, setSearchTermProd] = useState('');
     const [showResults, setShowResults] = useState(false);
@@ -147,6 +154,7 @@ const RegistrarVentasPag: React.FC<RegistrarVentas> = ({ productos, categoriaPro
 
     // Hook para registrar cliente
     const [apiRegistrarCliente] = useApiRegistrarClienteMutation();
+    const [apiObtenerVenta] = useApiObtenerVentaMutation();
 
     // Obtener tipos de documento
     const { data: tipoDocumentos } = useApiObtenerTipoDocQuery();
@@ -387,14 +395,13 @@ const RegistrarVentasPag: React.FC<RegistrarVentas> = ({ productos, categoriaPro
 
             }
 
-            console.log('Datos del formulario:', dataSend);
 
 
             setdataVentaEnvio(dataSend)
 
 
             if (data.metodoPago == 1) {
-
+                console.log('entro', dataSend);
 
                 const dataVenta = { dataVenta: dataSend, dataPago: {} }
 
@@ -404,7 +411,16 @@ const RegistrarVentasPag: React.FC<RegistrarVentas> = ({ productos, categoriaPro
                 reset();
                 handleClearCliente();
                 handleClearVenta();
+
+
+
+
+                const ventaRes = await apiObtenerVenta(result.ventaId).unwrap();
+
                 successAlert('Venta registrada correctamente')
+
+                setDatosDetalleVentaSel(ventaRes.result)
+                handleDetalleVentaOpenModal()
 
 
 
@@ -426,6 +442,7 @@ const RegistrarVentasPag: React.FC<RegistrarVentas> = ({ productos, categoriaPro
         } catch (error) {
             const apiError = error as ApiError;
             errorAlert(apiError?.data?.message || 'Error al registrar la venta');
+            console.log(error);
         }
 
 
@@ -594,12 +611,17 @@ const RegistrarVentasPag: React.FC<RegistrarVentas> = ({ productos, categoriaPro
                 reset();
                 handleClearCliente();
                 handleClearVenta();
+                const ventaRes = await apiObtenerVenta(resposeYape.ventaId).unwrap();
+                console.log('Venta obtenida:', ventaRes);
+                setDatosDetalleVentaSel(ventaRes.result)
+                handleDetalleVentaOpenModal()
 
-                console.log(resposeYape);
+
+
             }
 
             else {
-                console.log(resposeYape);
+
                 errorAlert("El pago fue rechazado o está pendiente")
             }
 
@@ -631,7 +653,10 @@ const RegistrarVentasPag: React.FC<RegistrarVentas> = ({ productos, categoriaPro
                 handleClearCliente();
                 handleClearVenta();
 
-                console.log(resposeMercadoPago);
+                const ventaRes = await apiObtenerVenta(resposeMercadoPago.ventaId).unwrap();
+                console.log('Venta obtenida:', ventaRes);
+                setDatosDetalleVentaSel(ventaRes.result)
+                handleDetalleVentaOpenModal()
             }
 
             else {
@@ -649,6 +674,16 @@ const RegistrarVentasPag: React.FC<RegistrarVentas> = ({ productos, categoriaPro
 
 
     };
+
+
+    async function handleGenerarpdf() {
+        if (datosDetalleVentaSel) {
+            generateInvoicePDF(datosDetalleVentaSel);
+        } else {
+            warningAlert('No hay datos de venta seleccionados para imprimir');
+        }
+    }
+
 
 
 
@@ -1395,6 +1430,105 @@ const RegistrarVentasPag: React.FC<RegistrarVentas> = ({ productos, categoriaPro
 
 
                 </ModalDosOpciones>
+
+
+                <ModalDosOpciones
+                    isLoadSecondOption={false}
+                    isOpen={modalDetalleVentaOpen}
+                    onClickFirstOption={handleDetalleVentaCloseModal}
+                    onClickSecondOption={handleGenerarpdf}
+                    titleFirstOption="Cerrar"
+                    titleSecondOption="Imprimir PDF"
+                >
+                    {datosDetalleVentaSel && (
+                        <div className='w-full p-2 text-sm'>
+                            {/* Cabecera */}
+                            <div className="flex justify-between items-center mb-4 border-b pb-2">
+                                <div>
+                                    <h3 className="text-xl font-bold text-gray-800">
+                                        Venta {datosDetalleVentaSel.serie}-{datosDetalleVentaSel.numero}
+                                    </h3>
+                                    <span className={`px-2 py-0.5 rounded text-xs font-semibold ${datosDetalleVentaSel.estado === "FACTURADO" ? "bg-green-100 text-green-800" :
+                                        datosDetalleVentaSel.estado === "ANULADO" ? "bg-red-100 text-red-800" :
+                                            "bg-yellow-100 text-yellow-800"
+                                        }`}>
+                                        {datosDetalleVentaSel.estado}
+                                    </span>
+                                </div>
+                                <div className="text-right text-gray-600">
+                                    <p>{new Date(datosDetalleVentaSel.fecha_venta).toLocaleDateString()} {new Date(datosDetalleVentaSel.fecha_venta).toLocaleTimeString()}</p>
+                                    <p className="font-semibold">{datosDetalleVentaSel.tipo_comprobante?.nombre}</p>
+                                </div>
+                            </div>
+
+                            {/* Info General en Grid */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 bg-gray-50 p-3 rounded">
+                                <div>
+                                    <p className="text-xs text-gray-500 uppercase font-bold">Cliente</p>
+                                    <p className="font-medium">{datosDetalleVentaSel.cliente?.nombre}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500 uppercase font-bold">Vendedor</p>
+                                    <p className="font-medium">{datosDetalleVentaSel.usuario?.username}</p>
+                                </div>
+                            </div>
+
+                            {/* Tabla de Productos */}
+                            <div className="mb-6 overflow-x-auto">
+                                <h4 className="font-semibold mb-2 text-gray-700 border-l-4 border-primary pl-2">Productos</h4>
+                                <table className="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr className="bg-gray-100 text-xs text-gray-600">
+                                            <th className="p-2 border-b">Producto</th>
+                                            <th className="p-2 border-b text-right">Precio</th>
+                                            <th className="p-2 border-b text-center">Cant.</th>
+                                            <th className="p-2 border-b text-right">Subtotal</th>
+                                            <th className="p-2 border-b text-right">IGV</th>
+                                            <th className="p-2 border-b text-right">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="text-gray-700">
+                                        {datosDetalleVentaSel.detalleVentas?.map((item: any, idx: number) => (
+                                            <tr key={item.id || idx} className="border-b hover:bg-gray-50">
+                                                <td className="p-2">{item.producto?.nombre}</td>
+                                                <td className="p-2 text-right">{item.precio_unitario}</td>
+                                                <td className="p-2 text-center">{item.cantidad}</td>
+                                                <td className="p-2 text-right text-gray-500">{item.subtotal}</td>
+                                                <td className="p-2 text-right text-gray-500">{item.igv}</td>
+                                                <td className="p-2 text-right font-medium">{item.total}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {/* Sección Inferior: Pagos y Totales */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Lista de Pagos */}
+                                <div>
+                                    <h4 className="font-semibold mb-2 text-gray-700 border-l-4 border-primary pl-2">Pagos</h4>
+                                    <ul className="space-y-1">
+                                        {datosDetalleVentaSel.pagos?.map((pago: any, idx: number) => (
+                                            <li key={pago.id || idx} className="flex justify-between text-sm bg-gray-50 p-2 rounded">
+                                                <span>{pago.metodoPago?.nombre}</span>
+                                                <span className="font-mono">{pago.monto}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                {/* Total General */}
+                                <div className="flex flex-col justify-end items-end">
+                                    <div className="text-right">
+                                        <p className="text-sm text-gray-500">Monto Total</p>
+                                        <p className="text-3xl font-bold text-primary">{datosDetalleVentaSel.total}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </ModalDosOpciones>
+
 
 
 

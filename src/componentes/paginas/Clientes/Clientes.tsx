@@ -12,7 +12,7 @@ import Dropdown from '../../atomos/formInputs/dropdown';
 import Loader2 from '../../atomos/Loader/loader2';
 import { useApiRegistrarClienteMutation, useApiActualizarClienteMutation, useApiEliminarClienteMutation } from '../../../api/apiSlice';
 import FormularioCliente, { ClienteFormData } from '../../organismos/Formularios/FormularioCliente';
-
+import { useAppSelector } from '../../../hook/useAppSelector';
 
 
 interface ClienteTableProps {
@@ -44,6 +44,8 @@ const ClienteTable: React.FC<ClienteTableProps> = ({ datos, tipodocumentos, load
             message: string;
         };
     }
+
+    const userPermisos = useAppSelector((state) => state.user.permisos);
 
     const [apiEliminarCliente] = useApiEliminarClienteMutation()
     const [apiRegistrarCliente] = useApiRegistrarClienteMutation()
@@ -299,13 +301,16 @@ const ClienteTable: React.FC<ClienteTableProps> = ({ datos, tipodocumentos, load
 
                 <div className='mb-4 w-auto' >
 
-                    <ButtonPrimaryOnclick onClick={() => {
+                    {userPermisos?.includes('CLIENTES_CREAR') && (
 
-                        setTypeOfPanel("Registrar")
-                        handleOpenModal()
+                        <ButtonPrimaryOnclick onClick={() => {
+
+                            setTypeOfPanel("Registrar")
+                            handleOpenModal()
 
 
-                    }} title='Registrar  Cliente' disable={false}></ButtonPrimaryOnclick>
+                        }} title='Registrar  Cliente' disable={false}></ButtonPrimaryOnclick>
+                    )}
 
                 </div>
 
@@ -332,20 +337,23 @@ const ClienteTable: React.FC<ClienteTableProps> = ({ datos, tipodocumentos, load
                                 <td className='border border-secundary4 '>
 
                                     <div className='flex flex-row justify-center gap-3 my-1'>
+                                        {userPermisos?.includes('CLIENTES_EDITAR') && (
+                                            <MdEdit title="Editar Cliente" onClick={() => {
 
-                                        <MdEdit title="Editar Cliente" onClick={() => {
 
+                                                setTypeOfPanel("Actualizar")
+                                                setSelCliente(client)
+                                                handleOpenModal()
 
-                                            setTypeOfPanel("Actualizar")
-                                            setSelCliente(client)
-                                            handleOpenModal()
+                                            }} className='bg-secundary2 hover:bg-secundary4 p-1 text-2xl rounded'></MdEdit>
+                                        )}
+                                        {userPermisos?.includes('CLIENTES_ELIMINAR') && (
+                                            <MdDelete title="Eliminar Cliente" className='bg-secundary2  hover:bg-secundary4 p-1 text-2xl rounded' onClick={() => {
+                                                setIdToDelete(client.id)
+                                                handleConfirmationOpenModal();
 
-                                        }} className='bg-secundary2 hover:bg-secundary4 p-1 text-2xl rounded'></MdEdit>
-                                        <MdDelete title="Eliminar Cliente" className='bg-secundary2  hover:bg-secundary4 p-1 text-2xl rounded' onClick={() => {
-                                            setIdToDelete(client.id)
-                                            handleConfirmationOpenModal();
-
-                                        }} ></MdDelete>
+                                            }} ></MdDelete>
+                                        )}
 
 
                                     </div>

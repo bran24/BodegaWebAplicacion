@@ -38,7 +38,7 @@ const Login = () => {
         try {
 
             const result = await apiLogin({ username, password }).unwrap()
-            console.log(result)
+
 
             const token = handleEncrypt(result.token);
 
@@ -49,6 +49,8 @@ const Login = () => {
 
 
             dispatch(login(user))
+
+        
 
 
             navigate('/principal/dashboard', { replace: true })

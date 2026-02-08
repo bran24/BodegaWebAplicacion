@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 
 interface ProtectedRouteProps {
   element: React.ReactElement; // Cambiado a React.ReactElement
-  requiredPermisos: number[]; // Lista de permisos requeridos
+  requiredPermisos: string[]; // Lista de permisos requeridos
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
