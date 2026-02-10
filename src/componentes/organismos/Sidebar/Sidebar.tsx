@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { NavLink, useLocation } from 'react-router-dom';
-import Logo from '../../../assets/img/bodebrand.png'
+import Logo from '../../../assets/img/bodebrand.webp'
 import { MdDashboard } from "react-icons/md";
-import { FaBox, FaArrowLeft, FaAngleUp, FaRegRectangleList, FaRegUser, MdPaid, FaBottleWater } from './../../../assets/icon/icons'
+import { FaBox, FaArrowLeft, FaAngleUp, FaRegRectangleList, FaRegUser } from './../../../assets/icon/icons'
 import SidebarLinkGroup from './SidebarLinkGroup';
 import { useAppSelector } from "../../../hook/useAppSelector";
 interface SidebarProps {

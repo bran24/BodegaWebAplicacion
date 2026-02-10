@@ -76,4 +76,4 @@ const PermisosTable: React.FC<PermisosTableProps> = ({ datos, load, err }) => {
 };
 
 const PagePermisos = withFetch(PermisosTable);
-export default PagePermisos;
+export default PagePermisos as React.ComponentType<any>;

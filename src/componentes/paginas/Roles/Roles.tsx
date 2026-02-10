@@ -9,7 +9,7 @@ import FormTextInput from '../../atomos/formInputs/formTextInput';
 import ButtonPrimaryOnclick from '../../atomos/buttons/buttonPrimaryOnclick';
 import { errorAlert, successAlert } from '../../../utils/alertNotify';
 import Loader2 from '../../atomos/Loader/loader2';
-import { useApiEliminarRolMutation, useApiActualizarRolMutation, useApiRegistrarRolMutation, useApiRegistrarRolPermisoMutation, useApiObtenerPermisosPorRolMutation, useApiActualizarRolPermisoMutation, useApiEliminarRolPermisoMutation } from '../../../api/apiSlice';
+import {  useApiActualizarRolMutation, useApiRegistrarRolMutation, useApiRegistrarRolPermisoMutation, useApiObtenerPermisosPorRolMutation, useApiActualizarRolPermisoMutation, useApiEliminarRolPermisoMutation } from '../../../api/apiSlice';
 
 
 interface RolesTableProps {
@@ -39,7 +39,7 @@ const RolesTable: React.FC<RolesTableProps> = ({ datos, load, err, dataPermisos 
         };
     }
     const [visibleTipos, setVisibleTipos] = useState<number[]>([]);
-    const [apiEliminarRol] = useApiEliminarRolMutation()
+    // const [apiEliminarRol] = useApiEliminarRolMutation()
     const [apiRegistrarRoles] = useApiRegistrarRolMutation()
     const [apiPermisosporRol] = useApiObtenerPermisosPorRolMutation()
     const [apiRegistrarRolPermiso] = useApiRegistrarRolPermisoMutation()
@@ -462,4 +462,4 @@ const RolesTable: React.FC<RolesTableProps> = ({ datos, load, err, dataPermisos 
 
 const PageRoles = withFetch(RolesTable);
 
-export default PageRoles;
+export default PageRoles as React.ComponentType<any>;;

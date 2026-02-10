@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useApiObtenerReporteIngresosQuery, useApiObtenerMetodoPagoQuery, useLazyApiObtenerReporteIngresosQuery } from '../../../api/apiSlice';
 import { FaCalendar, FaArrowLeft, FaArrowRight, FaFilePdf, FaSpinner } from 'react-icons/fa';
 import ButtonPrimaryOnclick from '../../atomos/buttons/buttonPrimaryOnclick';
@@ -221,4 +221,4 @@ const ReporteCajaPage = () => {
     )
 }
 
-export default ReporteCajaPage;
+export default ReporteCajaPage as React.ComponentType<any>;;

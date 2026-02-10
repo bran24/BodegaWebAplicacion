@@ -1,6 +1,6 @@
 
-import imglogo from '../../assets/img/bodebrand.png'
-import { Link, useNavigate } from 'react-router-dom';
+import imglogo from '../../assets/img/bodebrand.webp'
+import {  useNavigate } from 'react-router-dom';
 import { errorAlert } from '../../utils/alertNotify';
 import { useForm, SubmitHandler } from "react-hook-form"
 import 'react-toastify/dist/ReactToastify.css';
@@ -50,7 +50,7 @@ const Login = () => {
 
             dispatch(login(user))
 
-        
+
 
 
             navigate('/principal/dashboard', { replace: true })
@@ -104,7 +104,10 @@ const Login = () => {
 
                                     className="block w-full rounded-md border-0 outline-none py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
                                 />
+
+                                <p className='text-xs text-blue-700 font-semibold  m-1'>Usuario de prueba: pruebas</p>
                             </div>
+
                         </div>
 
                         <div>
@@ -112,11 +115,11 @@ const Login = () => {
                                 <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
                                     Contraseña
                                 </label>
-                                <div className="text-sm">
+                                {/* <div className="text-sm">
                                     <a href="#" className="font-semibold text-primary hover:text-primary2">
                                         ¿Olvidaste la contraseña?
                                     </a>
-                                </div>
+                                </div> */}
                             </div>
                             <div className="mt-2">
                                 <input
@@ -128,6 +131,7 @@ const Login = () => {
                                     className="block w-full rounded-md border-0 outline-none py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
                                 />
                             </div>
+                            <p className='text-xs text-blue-700 font-semibold  m-1'>Contraseña de prueba: 12345</p>
 
 
                         </div>
@@ -141,13 +145,7 @@ const Login = () => {
                             >
                                 Iniciar Sesion
                             </button>
-                            <div className="text-sm flex gap-3 mt-3" >
-                                <p>¿No estas registrado?</p>
 
-                                <Link to="/registrarUsuario" className="font-semibold text-primary hover:text-primary2">
-                                    Registrate
-                                </Link>
-                            </div>
                         </div>
 
                     </form>

@@ -6,7 +6,7 @@ import { FaBox, GoAlertFill, MdDelete, MdEdit, MdPaid } from '../../../assets/ic
 import ModalDosOpciones from '../../../utils/ModalDosOpciones';
 import { useForm, SubmitHandler } from "react-hook-form"
 import FormTextInput from '../../atomos/formInputs/formTextInput';
-import { FaCalendar, FaPercent } from 'react-icons/fa6';
+import { FaCalendar } from 'react-icons/fa6';
 import ButtonPrimaryOnclick from '../../atomos/buttons/buttonPrimaryOnclick';
 import { errorAlert, successAlert } from '../../../utils/alertNotify';
 import Dropdown from '../../atomos/formInputs/dropdown';
@@ -23,7 +23,6 @@ interface ProductoTableProps {
     categorias: Categoria[] | undefined;
     unidades: Unidad[] | undefined;
     proveedores: Proveedor[] | undefined;
-    totalItems: number,
     totalPages: number,
     currentPage: number,
     setPage: (pag: number) => void,
@@ -41,7 +40,7 @@ interface ProductoTableProps {
 
 }
 
-const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categorias, unidades, proveedores, totalItems,
+const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categorias, unidades, proveedores,
     totalPages,
     currentPage,
     query,
@@ -839,4 +838,4 @@ const ProductoTable: React.FC<ProductoTableProps> = ({ datos, load, err, categor
 
 const PageProductos = withFetch(ProductoTable);
 
-export default PageProductos;
+export default PageProductos as React.ComponentType<any>;

@@ -23,9 +23,6 @@ const LazyLogin = lazy(
   () => import("./componentes/paginas/login")
 );
 
-const LazyRegUsuario = lazy(
-  () => import("./componentes/paginas/Usuario/RegistrarUsuario.tsx")
-);
 
 
 
@@ -44,7 +41,6 @@ function App() {
           <Route path="/" element={<LazyLogin />}>  </Route>
           <Route path="/unauthorized" element={<h1>No Tiene Autorizacion</h1>} />
           <Route path="/payment-status" element={<EstadoPago />} />
-          <Route path="/registrarUsuario" element={<LazyRegUsuario />} />
           <Route path="/principal/*" element={<Principal />}>
             <Route path="*" element={<h1>No Encontrado</h1>} />
             <Route path="dashboard" element={<ProtectedRoute requiredPermisos={['DASHBOARD_VER']} element={<Dashboard />} />} />

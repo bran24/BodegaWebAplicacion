@@ -2,13 +2,11 @@
 import { Cliente, TipoDocumento } from '../../../api/types';
 import React, { useEffect, useState } from 'react';
 import withFetch from './withFetch';
-import { FaBox, GoAlertFill, MdDelete, MdEdit, MdPaid, MdEmail, MdOutlineLocalPhone } from '../../../assets/icon/icons'
+import {  GoAlertFill, MdDelete, MdEdit } from '../../../assets/icon/icons'
 import ModalDosOpciones from '../../../utils/ModalDosOpciones';
 import { useForm, SubmitHandler } from "react-hook-form"
-import FormTextInput from '../../atomos/formInputs/formTextInput';
 import ButtonPrimaryOnclick from '../../atomos/buttons/buttonPrimaryOnclick';
 import { errorAlert, successAlert } from '../../../utils/alertNotify';
-import Dropdown from '../../atomos/formInputs/dropdown';
 import Loader2 from '../../atomos/Loader/loader2';
 import { useApiRegistrarClienteMutation, useApiActualizarClienteMutation, useApiEliminarClienteMutation } from '../../../api/apiSlice';
 import FormularioCliente, { ClienteFormData } from '../../organismos/Formularios/FormularioCliente';
@@ -29,7 +27,7 @@ interface ClienteTableProps {
 }
 
 
-const ClienteTable: React.FC<ClienteTableProps> = ({ datos, tipodocumentos, load, err, totalItems,
+const ClienteTable: React.FC<ClienteTableProps> = ({ datos, tipodocumentos, load, err, 
     totalPages,
     currentPage,
     setPage,
@@ -449,4 +447,4 @@ const ClienteTable: React.FC<ClienteTableProps> = ({ datos, tipodocumentos, load
 
 const PageCliente = withFetch(ClienteTable);
 
-export default PageCliente;
+export default PageCliente as React.ComponentType<any>;;

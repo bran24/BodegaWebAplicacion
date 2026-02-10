@@ -1,23 +1,22 @@
 import withFetch2 from "./withFetch2";
-import { Categoria, MetodoPago, Product, TipoComprobante, Venta } from '../../../api/types';
+import { Categoria, MetodoPago, TipoComprobante } from '../../../api/types';
 import React, { useEffect, useState } from 'react';
-import { FaBox, GoAlertFill, MdDelete, MdEdit, MdPaid, MdEmail, MdOutlineLocalPhone } from '../../../assets/icon/icons'
+import { FaBox, MdDelete, MdPaid } from '../../../assets/icon/icons'
 import ModalDosOpciones from '../../../utils/ModalDosOpciones';
 import { useForm, SubmitHandler } from "react-hook-form"
 import FormTextInput from '../../atomos/formInputs/formTextInput';
-import { FaCalendar } from 'react-icons/fa6';
 import ButtonPrimaryOnclick from '../../atomos/buttons/buttonPrimaryOnclick';
 import { errorAlert, successAlert, warningAlert } from '../../../utils/alertNotify';
 import Dropdown from '../../atomos/formInputs/dropdown';
 import Loader2 from '../../atomos/Loader/loader2';
-import { useApiRegistrarMercadoPagoMutation, useApiRegistrarVentaMutation, useApiObtenerFiltroClientesQuery, useApiRegistrarClienteMutation, useApiObtenerTipoDocQuery, useApiObtenerFiltroProductosQuery, useApiObtenerVentaMutation } from '../../../api/apiSlice';
+import { useApiRegistrarVentaMutation, useApiObtenerFiltroClientesQuery, useApiRegistrarClienteMutation, useApiObtenerTipoDocQuery, useApiObtenerFiltroProductosQuery, useApiObtenerVentaMutation } from '../../../api/apiSlice';
 import FormularioCliente, { ClienteFormData } from "../../organismos/Formularios/FormularioCliente";
 import { useAppSelector } from '../../../hook/useAppSelector';
 import SwitchCustom from "../../atomos/checkbox/switchCustom";
 import { roundToTwoDecimals } from "../../../utils/documentHelpers";
 import { initMercadoPago, CardPayment } from '@mercadopago/sdk-react';
 import { PUBLIC_KEY_MERCADOPAGO } from '../../../config'
-import yapeimg from '../../../assets/img/yape-icon.png'
+import yapeimg from '../../../assets/img/yape-icon.webp'
 import { generateInvoicePDF } from "../../../utils/generateInvoicePDF";
 
 if (PUBLIC_KEY_MERCADOPAGO) {
@@ -43,33 +42,23 @@ interface MercadoPagoPaymentData {
 
 
 
-interface MercadoPagoButtonTypes {
 
-    items: Object,
-    total: number
-
-
-}
 
 
 interface RegistrarVentas {
 
-    productos: Product[] | undefined;
+
     categoriaProductos: Categoria[] | undefined;
     load: boolean;
     err: unknown;
     metodoPagos: MetodoPago[]
     tipoComprobantes: TipoComprobante[]
-    totalItemsp: number,
-    totalPagesp: number,
-    currentPagep: number,
-    setPage: (pag: number) => void,
 
 
 }
 
 
-const RegistrarVentasPag: React.FC<RegistrarVentas> = ({ productos, categoriaProductos, load, err, metodoPagos, tipoComprobantes, totalItemsp, totalPagesp, currentPagep, setPage, tipospago }) => {
+const RegistrarVentasPag: React.FC<RegistrarVentas> = ({ categoriaProductos, load, err, metodoPagos, tipoComprobantes }) => {
 
     interface VentasTypes {
 
@@ -123,13 +112,10 @@ const RegistrarVentasPag: React.FC<RegistrarVentas> = ({ productos, categoriaPro
     }
     const user = useAppSelector((state) => state.user)
 
-    const { register, clearErrors, handleSubmit, setValue, reset, formState: { errors }, watch } = useForm<VentasTypes>()
+    const { register, handleSubmit, setValue, reset, formState: { errors }, watch } = useForm<VentasTypes>()
 
-    const { register: registerYape, handleSubmit: handleSubmitYape, setValue: setValueYape, reset: resetYape, formState: { errors: errorsYape }, watch: watchYape } = useForm<YapeTypes>()
+    const { register: registerYape, handleSubmit: handleSubmitYape, setValue: setValueYape, formState: { errors: errorsYape } } = useForm<YapeTypes>()
     const [ApiRegistrarVenta] = useApiRegistrarVentaMutation()
-
-    const [ApiRegistrarMercadoPago] = useApiRegistrarMercadoPagoMutation()
-
 
     const [datosDetalleVentaSel, setDatosDetalleVentaSel] = useState<any>(undefined);
     const [modalDetalleVentaOpen, setModalDetalleVentaOpen] = useState(false);
@@ -601,7 +587,6 @@ const RegistrarVentasPag: React.FC<RegistrarVentas> = ({ productos, categoriaPro
 
             const dataVenta = { dataVenta: dataVentaEnvio, dataMercadoPago: dataYapeEnvio }
 
-            console.log(dataYapeEnvio);
 
             const resposeYape = await ApiRegistrarVenta(dataVenta).unwrap();
 
@@ -723,12 +708,14 @@ const RegistrarVentasPag: React.FC<RegistrarVentas> = ({ productos, categoriaPro
                                     type="text"
                                     className={`border p-2 rounded w-full ${isClienteLocked ? 'bg-gray-100' : ''
                                         } ${errors.cliente ? 'border-red-500' : ''}`}
-                                    placeholder="000000000 / cliente"
+                                    placeholder="000000000 / Cliente Estandar"
                                     value={searchTerm}
                                     onChange={handleSearchChange}
                                     onFocus={() => !isClienteLocked && searchTerm.length >= 2 && setShowResults(true)}
                                     disabled={isClienteLocked}
                                 />
+
+
                                 {/* Botón X para limpiar */}
                                 {isClienteLocked && (
                                     <button
@@ -742,7 +729,9 @@ const RegistrarVentasPag: React.FC<RegistrarVentas> = ({ productos, categoriaPro
                                         ✕
                                     </button>
                                 )}
+
                             </div>
+
                             <input
                                 type="hidden"
                                 {...register("cliente", { required: true })}
@@ -780,7 +769,9 @@ const RegistrarVentasPag: React.FC<RegistrarVentas> = ({ productos, categoriaPro
                                     )}
                                 </div>
                             )}
+
                         </div>
+
 
                         {/* Botón para crear cliente */}
                         <div className="w-auto flex">
@@ -1056,6 +1047,11 @@ const RegistrarVentasPag: React.FC<RegistrarVentas> = ({ productos, categoriaPro
 
 
                                 />
+                                <p className='text-xs text-blue-700 font-semibold  m-1'>Tarjeta de Credito/Debito Prueba:4009 1753 3280 6176</p>
+                                <p className='text-xs text-blue-700 font-semibold  m-1'>Fecha de Expiracion Prueba:11/30</p>
+                                <p className='text-xs text-blue-700 font-semibold  m-1'>Código de Seguridad Prueba:123</p>
+                                <p className='text-xs text-blue-700 font-semibold  m-1'>Nombre del Titular Prueba:APRO</p>
+                                <p className='text-xs text-blue-700 font-semibold  m-1'>DNI:123456789</p>
                             </div>
                         ) : metodoPagoWatch == 4 && mostrarPago ? (
                             <div className="mt-4">
@@ -1094,6 +1090,7 @@ const RegistrarVentasPag: React.FC<RegistrarVentas> = ({ productos, categoriaPro
 
 
                                 />
+                                <p className='text-xs text-blue-700 font-semibold  m-1'>Numero de Prueba: 111111111</p>
 
                                 <FormTextInput
                                     inputName="yapeOtp"
@@ -1124,6 +1121,7 @@ const RegistrarVentasPag: React.FC<RegistrarVentas> = ({ productos, categoriaPro
                                     errors={errorsYape.yapeOtp}
 
                                 />
+                                <p className='text-xs text-blue-700 font-semibold  m-1'>OTP de Prueba: 123456</p>
 
                                 <div className="w-40 mx-auto mt-4   ">
 
@@ -1545,4 +1543,4 @@ const RegistrarVentasPag: React.FC<RegistrarVentas> = ({ productos, categoriaPro
 const PageRegVentas = withFetch2(RegistrarVentasPag);
 
 
-export default PageRegVentas;
+export default PageRegVentas as React.ComponentType<any>;

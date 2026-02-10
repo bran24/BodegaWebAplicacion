@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApiObtenerCategoriaQuery, useApiObtenerMetodoPagoQuery, useApiObtenerProductosPaginacionQuery, useApiObtenerTipoComprobanteQuery } from '../../../api/apiSlice';
-import { MetodoPago, TipoComprobante, Product, ProximoNumero } from '../../../api/types';
+import { MetodoPago, TipoComprobante, Product } from '../../../api/types';
 
 interface WithFetchProps {
 

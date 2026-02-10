@@ -1,6 +1,5 @@
 
 import { generateInvoicePDF } from '../../../utils/generateInvoicePDF';
-import ButtonPrimaryOnclick from "../../atomos/buttons/buttonPrimaryOnclick";
 import { FaEye, FaMoneyBill, TiDelete, GoAlertFill } from '../../../assets/icon/icons'
 import withFetch1 from "./withFetch1";
 import { useApiActualizarEstadoVentaMutation, useApiObtenerVentaMutation, useLazyApiObtenerVentasPaginacionQuery } from '../../../api/apiSlice';
@@ -44,7 +43,7 @@ type ApiError = {
 }
 
 
-const ConsultarVentas = ({ datos, load, err, setPage, tipoComprobanteVentaData, tiposEstadoVenta, totalItemsp, totalPagesp, currentPagep, setFechaInicio, setFechaFin, setEstado, setTipoComprobanteId, setSearch, fechaInicio, fechaFin, estado, tipo_comprobanteid, search }: ConsultarVentasProps) => {
+const ConsultarVentas = ({ datos, load, err, setPage, tipoComprobanteVentaData, tiposEstadoVenta, totalPagesp, currentPagep, setFechaInicio, setFechaFin, setEstado, setTipoComprobanteId, setSearch, fechaInicio, fechaFin, estado, tipo_comprobanteid, search }: ConsultarVentasProps) => {
     const userPermisos = useAppSelector((state) => state.user.permisos);
 
     const [modalConfirmationOpen, setModalConfirmationOpen] = useState(false);
@@ -485,4 +484,4 @@ const ConsultarVentas = ({ datos, load, err, setPage, tipoComprobanteVentaData, 
 
 const pageConsultarVentas = withFetch1(ConsultarVentas)
 
-export default pageConsultarVentas;
+export default pageConsultarVentas as React.ComponentType<any>;;

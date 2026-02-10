@@ -2,16 +2,14 @@
 import { Proveedor } from '../../../api/types';
 import React, { useEffect, useState } from 'react';
 import withFetch from './withFetch';
-import { FaBox, GoAlertFill, MdDelete, MdEdit, MdPaid, MdEmail, MdOutlineLocalPhone } from '../../../assets/icon/icons'
+import { FaBox, GoAlertFill, MdDelete, MdEdit, MdEmail, MdOutlineLocalPhone } from '../../../assets/icon/icons'
 import ModalDosOpciones from '../../../utils/ModalDosOpciones';
 import { useForm, SubmitHandler } from "react-hook-form"
 import FormTextInput from '../../atomos/formInputs/formTextInput';
-import { FaCalendar } from 'react-icons/fa6';
 import ButtonPrimaryOnclick from '../../atomos/buttons/buttonPrimaryOnclick';
 import { errorAlert, successAlert } from '../../../utils/alertNotify';
-import Dropdown from '../../atomos/formInputs/dropdown';
 import Loader2 from '../../atomos/Loader/loader2';
-import { useApiRegistrarProveedorMutation, useApiActualizarProveedorMutation, useApiEliminarProveedorMutation, useApiObtenerProveedorPaginacionQuery } from '../../../api/apiSlice';
+import { useApiRegistrarProveedorMutation, useApiActualizarProveedorMutation, useApiEliminarProveedorMutation} from '../../../api/apiSlice';
 import { useAppSelector } from '../../../hook/useAppSelector';
 
 
@@ -28,7 +26,7 @@ interface ProveedorTableProps {
 }
 
 
-const ProveedorTable: React.FC<ProveedorTableProps> = ({ datos, load, err, totalItems,
+const ProveedorTable: React.FC<ProveedorTableProps> = ({ datos, load, err,
     totalPages,
     currentPage,
     setPage,
@@ -556,4 +554,4 @@ const ProveedorTable: React.FC<ProveedorTableProps> = ({ datos, load, err, total
 
 const PageProveedor = withFetch(ProveedorTable);
 
-export default PageProveedor;
+export default PageProveedor as React.ComponentType<any>;;

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import DropdownUser from './DropdownUser';
-import LogoIcon from '../../../assets/img/bodebrand.png';
+import LogoIcon from '../../../assets/img/bodebrand.webp';
 import { FaBars } from "react-icons/fa";
 
 const Header = (props: {

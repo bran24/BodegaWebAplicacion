@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ClickOutside from '../../../utils/ClickOutside';
-import UserOne from '../../../assets/img/persona.jpg';
+import {IoPerson} from '../../../../src/assets/icon/icons'
 import { useAppDispatch } from "../../../hook/useAppDispatch"
 
-import { FaChevronDown, FaRegUser } from "react-icons/fa6";
-import { IoSettingsOutline } from "react-icons/io5";
+import { FaChevronDown} from "react-icons/fa6";
 import { CiLogout } from "react-icons/ci";
 import { logout } from "../../../features/user/userSlice"
 import { } from "../../../assets/icon/icons"
@@ -37,9 +36,9 @@ const DropdownUser = () => {
           <span className="block text-xs">{user.rol?.nombre ?? "---"}</span>
         </span>
 
-        <span className="h-12 w-12 rounded-full">
-          <img src={UserOne} alt="User" />
-        </span>
+        
+          <IoPerson className='text-4xl'></IoPerson>
+        
         < FaChevronDown className="hidden fill-current sm:block" />
 
       </Link>
@@ -50,7 +49,7 @@ const DropdownUser = () => {
           className={`absolute right-0 mt-6 flex w-60 flex-col rounded-sm border
             bg-white shadow-default `}
         >
-          <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-4">
+          {/* <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-4">
             <li>
               <Link
                 to="/profile"
@@ -70,7 +69,7 @@ const DropdownUser = () => {
                 Cofiguracion
               </Link>
             </li>
-          </ul>
+          </ul> */}
           <button onClick={() => {
             localStorage.setItem('token', '')
             dispatch(logout())

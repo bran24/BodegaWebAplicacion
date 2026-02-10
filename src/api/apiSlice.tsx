@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { API_URL } from '../config.tsx'
-import { Cliente, ClienteResponse, ClientePagResponse, Categoria, CategoriaResponse, PermisosporTipo, PermisosResponse, ProductPagResponse, Roles, rolPermisos, RolPermisosResponse, RolResponse, Unidad, UnidadResponse, UsuarioPagResponse, Proveedor, ProveedorPagResponse, ProveedorResponse, TipoDocumento, TiDocResponse, VentaPagResponse, VentaIdResponse, Venta, MetodoPago, MetodoPagoResponse, TipoComprobante, TipoComprobanteResponse, FiltroClientesResponse, Clientev, Productovfiltro, FiltroProductosResponse, DashboardResponse, ReporteIngresosResponse, ChatIAResponse } from './types';
+import { Cliente, ClienteResponse, ClientePagResponse, Categoria, CategoriaResponse, PermisosporTipo, PermisosResponse, ProductPagResponse, Roles, rolPermisos, RolPermisosResponse, RolResponse, Unidad, UnidadResponse, UsuarioPagResponse, Proveedor, ProveedorPagResponse, ProveedorResponse, TipoDocumento, TiDocResponse, VentaPagResponse,MetodoPago, MetodoPagoResponse, TipoComprobante, TipoComprobanteResponse, FiltroClientesResponse, Clientev, Productovfiltro, FiltroProductosResponse, DashboardResponse, ReporteIngresosResponse, ChatIAResponse } from './types';
 import { handleDecrypt } from '../utils/Encriptacion.tsx';
 // Define a service using a base URL and expected endpoints
 
@@ -411,14 +411,11 @@ export const apiSlice = createApi({
         apiObtenerChatIA: builder.mutation<ChatIAResponse, { question: string }>({
             query: (newtask) => ({ url: "chatia", method: "POST", body: newtask }),
 
-        }),
+        })
 
 
 
-               apiRegistrarMercadoPago: builder.mutation({
-            query: (newtask) => ({ url: "process-payment", method: "POST", body: newtask })
-       
-        }),
+    
 
 
 
@@ -429,4 +426,4 @@ export const apiSlice = createApi({
     }),
 })
 
-export const {useApiRegistrarMercadoPagoMutation,useApiObtenerChatIAMutation, useApiObtenerDashboardQuery, useApiActualizarEstadoVentaMutation, useApiObtenerFiltroProductosQuery, useApiObtenerFiltroClientesQuery, useApiObtenerMetodoPagoQuery, useApiObtenerTipoComprobanteQuery, useApiObtenerVentaMutation, useApiObtenerVentasPaginacionQuery, useApiRegistrarVentaMutation, useApiObtenerTipoDocQuery, useApiRegistrarClienteMutation, useApiObtenerClienteQuery, useApiObtenerClientePaginacionQuery, useApiActualizarClienteMutation, useApiEliminarClienteMutation, useApiObtenerProveedorQuery, useApiObtenerProveedorPaginacionQuery, useApiRegistrarProveedorMutation, useApiActualizarProveedorMutation, useApiEliminarProveedorMutation, useApiLoginMutation, useApiCrearUsuarioMutation, useApiRegistrarProductosMutation, useApiObtenerCategoriaQuery, useApiObtenerUnidadQuery, useApiActualizarProductosMutation, useApiEliminarProductosMutation, useApiObtenerProductosPaginacionQuery, useApiEliminarRolMutation, useApiObtenerPermisosQuery, useApiObtenerRolesQuery, useApiObtenerRolPermisosQuery, useApiRegistrarRolMutation, useApiRegistrarRolPermisoMutation, useApiActualizarPermisoMutation, useApiActualizarRolMutation, useApiEliminarUsuarioMutation, useApiActualizarUsuarioMutation, useApiObtenerUsuariosPaginacionQuery, useApiObtenerPermisosPorRolMutation, useApiActualizarRolPermisoMutation, useApiEliminarRolPermisoMutation, useApiObtenerReporteIngresosQuery, useLazyApiObtenerReporteIngresosQuery, useLazyApiObtenerVentasPaginacionQuery, useLazyApiObtenerProductosPaginacionQuery } = apiSlice
+export const {useApiObtenerChatIAMutation, useApiObtenerDashboardQuery, useApiActualizarEstadoVentaMutation, useApiObtenerFiltroProductosQuery, useApiObtenerFiltroClientesQuery, useApiObtenerMetodoPagoQuery, useApiObtenerTipoComprobanteQuery, useApiObtenerVentaMutation, useApiObtenerVentasPaginacionQuery, useApiRegistrarVentaMutation, useApiObtenerTipoDocQuery, useApiRegistrarClienteMutation, useApiObtenerClienteQuery, useApiObtenerClientePaginacionQuery, useApiActualizarClienteMutation, useApiEliminarClienteMutation, useApiObtenerProveedorQuery, useApiObtenerProveedorPaginacionQuery, useApiRegistrarProveedorMutation, useApiActualizarProveedorMutation, useApiEliminarProveedorMutation, useApiLoginMutation, useApiCrearUsuarioMutation, useApiRegistrarProductosMutation, useApiObtenerCategoriaQuery, useApiObtenerUnidadQuery, useApiActualizarProductosMutation, useApiEliminarProductosMutation, useApiObtenerProductosPaginacionQuery, useApiEliminarRolMutation, useApiObtenerPermisosQuery, useApiObtenerRolesQuery, useApiObtenerRolPermisosQuery, useApiRegistrarRolMutation, useApiRegistrarRolPermisoMutation, useApiActualizarPermisoMutation, useApiActualizarRolMutation, useApiEliminarUsuarioMutation, useApiActualizarUsuarioMutation, useApiObtenerUsuariosPaginacionQuery, useApiObtenerPermisosPorRolMutation, useApiActualizarRolPermisoMutation, useApiEliminarRolPermisoMutation, useApiObtenerReporteIngresosQuery, useLazyApiObtenerReporteIngresosQuery, useLazyApiObtenerVentasPaginacionQuery, useLazyApiObtenerProductosPaginacionQuery } = apiSlice

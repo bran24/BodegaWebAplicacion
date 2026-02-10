@@ -38,7 +38,7 @@ const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        login: (state, action: PayloadAction<{ id: number, username: string, email: string, rol: rol, permisos: string[] }>) => {
+        login: (_state, action: PayloadAction<{ id: number, username: string, email: string, rol: rol, permisos: string[] }>) => {
             const userData = action.payload;
             localStorage.setItem('user', JSON.stringify(userData));
             // state.id = action.payload.id;

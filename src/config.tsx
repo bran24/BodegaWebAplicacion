@@ -3,7 +3,7 @@ export const API_TKEY: string = import.meta.env.VITE_TKEY;
 export const PUBLIC_KEY_MERCADOPAGO: string = (import.meta.env.VITE_PUBLIC_KEY_MERCADOPAGO || '')
     .replace(/['";]/g, '') // Elimina comillas simples, dobles y puntos y coma
     .trim();
-import logoBodeBrand from './assets/img/bodebrand.png';
+import logoBodeBrand from './assets/img/bodebrand.webp';
 export const COMPANY_INFO = {
     nombre: "BodeBrand",
     ruc: "20600000001",

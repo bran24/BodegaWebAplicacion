@@ -525,4 +525,4 @@ const UsuarioTable: React.FC<UsuarioTableProps> = ({ datos, load, err,
 
 const PageUsuarios = withFetch(UsuarioTable);
 
-export default PageUsuarios;
+export default PageUsuarios as React.ComponentType<any>;

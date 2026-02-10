@@ -1,7 +1,7 @@
 
 import { useApiObtenerDashboardQuery } from '../../../api/apiSlice';
 import { FaMoneyBillWave, FaShoppingCart, FaChartLine, FaExclamationTriangle, FaBoxOpen, FaClock } from 'react-icons/fa';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, TooltipProps } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const Dashboard = () => {
     const { data, error, isLoading } = useApiObtenerDashboardQuery();
@@ -84,7 +84,7 @@ const Dashboard = () => {
                                 <YAxis />
                                 <Tooltip
                                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                                    formatter={(value: number) => [`S/ ${value}`, 'Venta Total']}
+                                    formatter={(value: any) => [`S/ ${value ?? 0}`, 'Venta Total']}
                                     labelFormatter={(label: any) => new Date(label).toLocaleDateString()}
                                 />
                                 <Bar dataKey="total" fill="#4f46e5" radius={[4, 4, 0, 0]} barSize={40} />
