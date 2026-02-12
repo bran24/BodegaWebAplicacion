@@ -12,3 +12,5 @@ export const COMPANY_INFO = {
     email: "contacto@mibodega.com",
     logo: logoBodeBrand // Ruta en carpeta public o URL externa
 };
+
+export const API_MERCADOPAGO_YAPE: string = import.meta.env.VITE_API_MERCADOPAGO_YAPE;

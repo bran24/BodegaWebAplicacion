@@ -15,7 +15,7 @@ import { useAppSelector } from '../../../hook/useAppSelector';
 import SwitchCustom from "../../atomos/checkbox/switchCustom";
 import { roundToTwoDecimals } from "../../../utils/documentHelpers";
 import { initMercadoPago, CardPayment } from '@mercadopago/sdk-react';
-import { PUBLIC_KEY_MERCADOPAGO } from '../../../config'
+import { PUBLIC_KEY_MERCADOPAGO,API_MERCADOPAGO_YAPE} from '../../../config'
 import yapeimg from '../../../assets/img/yape-icon.webp'
 import { generateInvoicePDF } from "../../../utils/generateInvoicePDF";
 
@@ -548,7 +548,7 @@ const RegistrarVentasPag: React.FC<RegistrarVentas> = ({ categoriaProductos, loa
             // Generar requestId único (puedes usar uuid o timestamp para pruebas)
             const requestId = Date.now().toString() + Math.floor(Math.random() * 1000).toString();
 
-            const response = await fetch(`https://api.mercadopago.com/platforms/pci/yape/v1/payment?public_key=${PUBLIC_KEY_MERCADOPAGO}`, {
+            const response = await fetch(`${API_MERCADOPAGO_YAPE}=${PUBLIC_KEY_MERCADOPAGO}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
