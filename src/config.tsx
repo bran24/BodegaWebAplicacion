@@ -4,13 +4,16 @@ export const PUBLIC_KEY_MERCADOPAGO: string = (import.meta.env.VITE_PUBLIC_KEY_M
     .replace(/['";]/g, '') // Elimina comillas simples, dobles y puntos y coma
     .trim();
 import logoBodeBrand from './assets/img/bodebrand.webp';
+import logoBodeBrandpdf from './assets/img/bodebrand_pdf.webp';
 export const COMPANY_INFO = {
     nombre: "BodeBrand",
     ruc: "20600000001",
     direccion: "Manuel Cedeño 1100, Trujillo",
-    telefono: "9127011325",
+    telefono: "987654321",
     email: "contacto@mibodega.com",
-    logo: logoBodeBrand // Ruta en carpeta public o URL externa
+    logo: logoBodeBrand,
+    logo_pdf: logoBodeBrandpdf
+
 };
 
 export const API_MERCADOPAGO_YAPE: string = import.meta.env.VITE_API_MERCADOPAGO_YAPE;

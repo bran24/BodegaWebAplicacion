@@ -21,7 +21,7 @@ export const generateReportPDF = async (
 
     // 1. Logo y Cabecera
     try {
-        const logoUrl = new URL(COMPANY_INFO.logo, import.meta.url).href;
+        const logoUrl = new URL(COMPANY_INFO.logo_pdf, import.meta.url).href;
         const img = await loadImage(logoUrl);
         doc.addImage(img, 'PNG', 14, 10, 20, 20);
     } catch (e) {

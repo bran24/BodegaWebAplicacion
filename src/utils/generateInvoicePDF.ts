@@ -19,7 +19,7 @@ export const generateInvoicePDF = async (venta: any) => {
     // Logo
     try {
         // Usamos la ruta configurada
-        const img = await loadImage(COMPANY_INFO.logo);
+        const img = await loadImage(COMPANY_INFO.logo_pdf);
 
         // Agregar imagen (x, y, ancho, alto)
         // El logo se coloca a la izquierda

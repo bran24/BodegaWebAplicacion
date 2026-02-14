@@ -26,7 +26,7 @@ export const generateProductsPDF = async (products: Product[], options?: Product
 
     // Cargar Logo
     try {
-        const logo = await loadImage(COMPANY_INFO.logo); // Usa una ruta absoluta si está en public o una URL
+        const logo = await loadImage(COMPANY_INFO.logo_pdf); // Usa una ruta absoluta si está en public o una URL
         doc.addImage(logo, 'PNG', 14, 10, 20, 20); // x, y, ancho, alto
     } catch (error) {
         console.warn('No se pudo cargar el logo:', error);
