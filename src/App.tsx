@@ -17,7 +17,7 @@ import PageRoles from "./componentes/paginas/Roles/Roles.tsx";
 import PageUsuarios from "./componentes/paginas/Usuario/Usuarios.tsx";
 import ProtectedRoute from "./utils/protectedRoute.tsx";
 import ReporteCajaPage from "./componentes/paginas/Reportes/ReporteCaja.tsx";
-import ChatIAPage from "./componentes/paginas/ChatbotIA/ChaIA.tsx";
+import ChatIAPage from "./componentes/paginas/AsistenteIA/ChaIA.tsx";
 import EstadoPago from "./componentes/paginas/Ventas/EstadoPago.tsx";
 const LazyLogin = lazy(
   () => import("./componentes/paginas/login")
@@ -45,7 +45,7 @@ function App() {
             <Route path="*" element={<h1>No Encontrado</h1>} />
             <Route path="dashboard" element={<ProtectedRoute requiredPermisos={['DASHBOARD_VER']} element={<Dashboard />} />} />
             <Route path="productos" element={<ProtectedRoute requiredPermisos={['PRODUCTOS_VER']} element={<PageProductos />} />} />
-            <Route path="chatbotIA" element={<ProtectedRoute requiredPermisos={['ASISTENTE_VER']} element={<ChatIAPage />} />} />
+            <Route path="chatIA" element={<ProtectedRoute requiredPermisos={['ASISTENTE_VER']} element={<ChatIAPage />} />} />
             <Route path="clientes" element={<ProtectedRoute requiredPermisos={['CLIENTES_VER']} element={<Clientes />} />} />
             <Route path="ventas/registrarVentas" element={<ProtectedRoute requiredPermisos={['VENTAS_CREAR']} element={<RegistrarVentas />} />} />
             <Route path="ventas/consultarVentas" element={<ProtectedRoute requiredPermisos={['VENTAS_VER']} element={<ConsultarVentas />} />} />

@@ -396,13 +396,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
                         {userPermisos.includes('ASISTENTE_VER') && <li>
                             <NavLink
-                                to="/principal/chatbotIA"
+                                to="/principal/chatIA"
                                 className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-primary2  ${pathname.includes('chatIA') &&
                                     'bg-primary'
                                     }`}
                             >
                                 <  FaBox />
-                                ChatBot IA
+                                Asistente IA
                             </NavLink>
                         </li>
                         }
